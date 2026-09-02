@@ -157,7 +157,7 @@ export default async function(req: Request): Promise<Response> {
 
     return Response.json({
       ok: true,
-      catalog_size: DEMAND_SOURCES.length,
+      catalog_size: ALL_SOURCES.length,
       seeded,
       duplicates,
       cloud_browser_configured: browserConfigured,
