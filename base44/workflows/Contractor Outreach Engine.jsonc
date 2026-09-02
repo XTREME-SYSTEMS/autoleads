@@ -1,0 +1,47 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "contractor_outreach_engine",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_outreach": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendContractorOutreach",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send contractor outreach",
+            "description": "Sends branded intro emails to new contractors + follow-ups to those due (3-email sequence, ~4-day cadence)"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Contractor Outreach Engine",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Daily (9am ET) \u2014 autonomously sends the branded National Concrete Polishing intro email to new contractors, then follow-ups every ~4 days (3-email sequence) to stay top-of-mind and earn a spot on their bidder lists."
+}

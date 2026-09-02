@@ -1,0 +1,85 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "validation_gate_sweep",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "validate_leads": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "validationGate",
+            "args": {
+              "gate": "lead_intake",
+              "auto_remediate": true,
+              "_service_token": ""
+            }
+          },
+          "then": "validate_takeoffs",
+          "x-base44": {
+            "title": "Gate 1: Lead Intake Validation",
+            "description": "Validates all new leads before humans see them. Auto-remediates missing docs/specs."
+          }
+        }
+      },
+      {
+        "validate_takeoffs": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "validationGate",
+            "args": {
+              "gate": "prepared_takeoff",
+              "auto_remediate": true,
+              "_service_token": ""
+            }
+          },
+          "then": "validate_bid_packages",
+          "x-base44": {
+            "title": "Gate 2: Prepared Takeoff Validation",
+            "description": "Validates takeoffs before human review. Auto-fixes incomplete takeoffs."
+          }
+        }
+      },
+      {
+        "validate_bid_packages": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "validationGate",
+            "args": {
+              "gate": "bid_package",
+              "auto_remediate": true,
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Gate 3: Bid Package Validation",
+            "description": "Validates bid packages before delivery. Ensures mandatory checklist is met."
+          }
+        }
+      }
+    ]
+  },
+  "name": "Validation Gate Sweep",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "30 5 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Daily at 5:30am ET \u2014 runs all 3 validation gates after the morning scrape. Ensures no human ever sees an incomplete lead, takeoff, or bid package. Auto-remediates missing items and logs everything to ValidationLog."
+}

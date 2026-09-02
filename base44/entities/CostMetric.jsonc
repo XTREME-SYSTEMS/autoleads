@@ -1,0 +1,126 @@
+{
+  "name": "CostMetric",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "labor",
+        "materials",
+        "equipment",
+        "software",
+        "marketing",
+        "overhead",
+        "operations",
+        "subcontractors",
+        "insurance",
+        "fuel",
+        "permits",
+        "other"
+      ],
+      "default": "other",
+      "description": "Cost category"
+    },
+    "subcategory": {
+      "type": "string",
+      "description": "More specific cost type within the category"
+    },
+    "description": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Cost amount in dollars"
+    },
+    "period": {
+      "type": "string",
+      "description": "Billing period (e.g. 2026-08, Q3-2026, 2026)"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "is_recurring": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_predicted": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this is an AI-predicted future cost"
+    },
+    "confidence_score": {
+      "type": "number",
+      "description": "0-100 confidence for predicted costs"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Optional link to specific project"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "category",
+    "amount",
+    "period"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "new_lead_push_notifications",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "push_alerts": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "pushNewLeadAlerts",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send new lead push notifications",
+            "description": "Check for new leads matching each organization's criteria and send mobile push notifications"
+          }
+        }
+      }
+    ]
+  },
+  "name": "New Lead Push Notifications",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/30 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Every 30 minutes \u2014 checks for newly discovered leads matching each organization's trade and location criteria, then sends a mobile push notification to the organization owner's phone."
+}

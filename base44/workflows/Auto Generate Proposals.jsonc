@@ -1,0 +1,48 @@
+{
+  "name": "Auto Generate Proposals",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "30 */6 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Turns new leads into draft proposals queued for approval, every 6 hours.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "auto_generate_proposals",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "generate": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "autoProposals",
+            "args": {
+              "_service_token": "",
+              "limit": 10
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Generate proposals",
+            "description": "Draft proposals from new leads"
+          }
+        }
+      }
+    ]
+  }
+}

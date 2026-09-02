@@ -1,0 +1,174 @@
+{
+  "name": "SourceQualityScore",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Owning organization (empty for global source quality)"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "Links to ScrapeSource record"
+    },
+    "source_name": {
+      "type": "string"
+    },
+    "source_category": {
+      "type": "string",
+      "enum": [
+        "government_portal",
+        "aggregator",
+        "permit",
+        "news",
+        "agenda",
+        "federal_api",
+        "email",
+        "manual"
+      ],
+      "default": "government_portal"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "description": "Geographic jurisdiction this source covers"
+    },
+    "records_contributed": {
+      "type": "number",
+      "default": 0,
+      "description": "Total records this source has contributed to the corpus"
+    },
+    "records_accepted": {
+      "type": "number",
+      "default": 0,
+      "description": "Records reviewed and confirmed as active opportunities"
+    },
+    "records_rejected": {
+      "type": "number",
+      "default": 0,
+      "description": "Records reviewed and rejected (not an opportunity, wrong state, wrong trade, etc.)"
+    },
+    "false_positives": {
+      "type": "number",
+      "default": 0,
+      "description": "Records system classified as active but reviewer marked as not an opportunity"
+    },
+    "duplicate_contribution": {
+      "type": "number",
+      "default": 0,
+      "description": "Records that were duplicates of opportunities from other sources"
+    },
+    "precision_score": {
+      "type": "number",
+      "description": "0-100: accepted / (accepted + false_positives)"
+    },
+    "freshness_score": {
+      "type": "number",
+      "description": "0-100: percentage of records with FRESH freshness status"
+    },
+    "deadline_accuracy": {
+      "type": "number",
+      "description": "0-100: percentage of records with verified correct deadlines"
+    },
+    "value_accuracy": {
+      "type": "number",
+      "description": "0-100: percentage of records with verified correct published values"
+    },
+    "document_completeness": {
+      "type": "number",
+      "description": "0-100: percentage of records with complete documents (plans, specs, addenda)"
+    },
+    "contact_completeness": {
+      "type": "number",
+      "description": "0-100: percentage of records with complete contact information"
+    },
+    "pursue_rate": {
+      "type": "number",
+      "description": "0-100: percentage of opportunities from this source that were pursued"
+    },
+    "pass_rate": {
+      "type": "number",
+      "description": "0-100: percentage of opportunities from this source that were passed on"
+    },
+    "bid_rate": {
+      "type": "number",
+      "description": "0-100: percentage of pursued opportunities that resulted in a bid"
+    },
+    "win_rate": {
+      "type": "number",
+      "description": "0-100: percentage of bids from this source that were won"
+    },
+    "quality_score": {
+      "type": "number",
+      "description": "0-100 composite source quality score weighted by reviewed evidence"
+    },
+    "last_scored_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "source_name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

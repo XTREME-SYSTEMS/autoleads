@@ -1,0 +1,47 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "auto_scrape_opportunities",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "scrape": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runAutoScrape",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Scrape opportunities",
+            "description": "Find new leads matching trades, scopes, service areas"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Auto Scrape Opportunities",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 4 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Daily at 4am ET \u2014 scrapes construction opportunities matching the contractor's trades, scopes, and service areas before they wake up. Fresh leads ready by 5am."
+}

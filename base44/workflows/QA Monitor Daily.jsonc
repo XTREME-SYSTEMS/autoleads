@@ -1,0 +1,47 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "qa_monitor_daily",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "qa_scan": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "qaMonitor",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "QA monitor scan",
+            "description": "Scans outbound emails and proposals for completeness, misspellings, missing docs, and professionalism issues"
+          }
+        }
+      }
+    ]
+  },
+  "name": "QA Monitor Daily",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 6 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Daily at 6am ET \u2014 QA agent scans outbound emails and proposals for missing documents, misspellings, missing branding, and completeness issues. Creates flags on the dashboard."
+}

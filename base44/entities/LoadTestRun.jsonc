@@ -1,0 +1,146 @@
+{
+  "name": "LoadTestRun",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Human-readable run identifier (e.g. RUN-001)"
+    },
+    "target_org_contexts": {
+      "type": "number",
+      "description": "Total organization contexts to test"
+    },
+    "target_operations": {
+      "type": "number",
+      "description": "Total operations planned"
+    },
+    "batch_size": {
+      "type": "number",
+      "default": 100,
+      "description": "Org contexts per batch"
+    },
+    "concurrency": {
+      "type": "number",
+      "default": 5,
+      "description": "Max concurrent worker batches"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "QUEUED",
+        "RUNNING",
+        "PARTIAL",
+        "COMPLETE",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "default": "QUEUED"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "total_operations": {
+      "type": "number",
+      "default": 0
+    },
+    "completed_operations": {
+      "type": "number",
+      "default": 0
+    },
+    "failed_operations": {
+      "type": "number",
+      "default": 0
+    },
+    "p50_latency_ms": {
+      "type": "number",
+      "description": "Median operation latency in milliseconds"
+    },
+    "p95_latency_ms": {
+      "type": "number",
+      "description": "95th percentile latency"
+    },
+    "p99_latency_ms": {
+      "type": "number",
+      "description": "99th percentile latency"
+    },
+    "error_rate": {
+      "type": "number",
+      "description": "Percentage of failed operations"
+    },
+    "throughput_ops_per_sec": {
+      "type": "number",
+      "description": "Operations per second"
+    },
+    "queue_depth_peak": {
+      "type": "number",
+      "default": 0
+    },
+    "retry_count": {
+      "type": "number",
+      "default": 0
+    },
+    "rate_limit_count": {
+      "type": "number",
+      "default": 0
+    },
+    "dead_letter_count": {
+      "type": "number",
+      "default": 0
+    },
+    "total_batches": {
+      "type": "number",
+      "default": 0
+    },
+    "completed_batches": {
+      "type": "number",
+      "default": 0
+    },
+    "failed_batches": {
+      "type": "number",
+      "default": 0
+    },
+    "failure_injections": {
+      "type": "string",
+      "description": "JSON string of injected failure types and results"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "NON_PRODUCTION_EXAMPLE"
+    }
+  },
+  "required": [
+    "run_id",
+    "target_org_contexts"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

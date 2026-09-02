@@ -1,0 +1,48 @@
+{
+  "description": "Daily \u2014 drafts follow-up emails for proposals sent 5+ days ago with no reply",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "auto_follow_up",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "draft_followups": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "autoFollowUp",
+            "args": {
+              "_service_token": "",
+              "days": 5
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Draft follow-ups",
+            "description": "Proposals sent 5+ days ago, no reply"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Auto Follow-Up",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}

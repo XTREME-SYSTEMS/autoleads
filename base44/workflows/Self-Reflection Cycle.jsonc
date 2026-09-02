@@ -1,0 +1,48 @@
+{
+  "name": "Self-Reflection Cycle",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "15 6 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Daily self-reflection cycle: runs after the 5am scrape and 6am pipeline. Evaluates the pipeline run, scores the system, checks emails, creates flags, auto-fixes issues, auto-heals, re-scores, and records the reflection for continuous improvement.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "self_reflection_cycle",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "reflect": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "selfReflect",
+            "args": {
+              "_service_token": "",
+              "triggered_by": "workflow"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Self-reflect, score, fix, heal, re-score",
+            "description": "Runs pipeline, scores, checks emails, creates flags, auto-fixes, auto-heals, re-scores, and logs the reflection"
+          }
+        }
+      }
+    ]
+  }
+}

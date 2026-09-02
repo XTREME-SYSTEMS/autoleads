@@ -1,0 +1,49 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 2 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "nightly_source_validation",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "validate_and_prune": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "seedDemandSources",
+            "args": {
+              "validate_all": true,
+              "prune_failed": true,
+              "prune_threshold": 3
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Validate all sources & prune failures",
+            "description": "Loops through every queued source, then deletes any that failed 3+ times"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Nightly Source Validation",
+  "description": "Every night, validates ALL queued demand sources in batches and prunes any source that has failed repeatedly so the catalog stays fresh and ready."
+}

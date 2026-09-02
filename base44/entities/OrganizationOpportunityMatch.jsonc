@@ -1,0 +1,191 @@
+{
+  "name": "OrganizationOpportunityMatch",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "canonical_opportunity_id": {
+      "type": "string",
+      "description": "Links to the global CanonicalOpportunity"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Links to the org's Project record (private tenant pipeline)"
+    },
+    "location_eligibility": {
+      "type": "string",
+      "enum": [
+        "IN_SERVICE_AREA",
+        "OUT_OF_SERVICE_AREA",
+        "UNKNOWN_LOCATION",
+        "BORDER_MARKET",
+        "MANUAL_OVERRIDE",
+        "SUPPRESSED",
+        "NO_ORGANIZATION_MATCH"
+      ],
+      "default": "UNKNOWN_LOCATION"
+    },
+    "location_explanation": {
+      "type": "string"
+    },
+    "trade_match": {
+      "type": "string",
+      "enum": [
+        "PRIMARY_MATCH",
+        "SECONDARY_MATCH",
+        "WEAK_MATCH",
+        "NO_MATCH",
+        "EXCLUDED_SCOPE"
+      ],
+      "default": "NO_MATCH"
+    },
+    "trade_explanation": {
+      "type": "string"
+    },
+    "bidability_score": {
+      "type": "number",
+      "description": "0-100 explainable bidability score"
+    },
+    "bidability_factors": {
+      "type": "string",
+      "description": "JSON string of bidability factor breakdown"
+    },
+    "pursue_decision": {
+      "type": "string",
+      "enum": [
+        "pursue",
+        "pass",
+        "undecided"
+      ],
+      "default": "undecided"
+    },
+    "pipeline_state": {
+      "type": "string",
+      "description": "Private tenant-specific pipeline stage"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "pricing_relationship_id": {
+      "type": "string"
+    },
+    "freshness_status": {
+      "type": "string",
+      "enum": [
+        "FRESH",
+        "AGING",
+        "STALE",
+        "EXPIRED",
+        "CLOSED",
+        "AWARDED",
+        "CANCELLED",
+        "SOURCE_CHANGED",
+        "SOURCE_UNAVAILABLE",
+        "UNKNOWN"
+      ],
+      "default": "UNKNOWN"
+    },
+    "is_hot_lead": {
+      "type": "boolean",
+      "default": false,
+      "description": "True only when location + trade + freshness all qualify"
+    },
+    "suppressed": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when this match is suppressed (out-of-area, wrong trade, expired) but not deleted"
+    },
+    "suppression_reason": {
+      "type": "string",
+      "description": "Human-readable reason for suppression"
+    },
+    "first_seen_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "organization_id",
+    "canonical_opportunity_id"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

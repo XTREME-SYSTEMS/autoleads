@@ -1,0 +1,47 @@
+{
+  "description": "Advances projects through qualification \u2192 takeoff \u2192 estimate \u2192 proposal every 4 hours",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "pipeline_advancement",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "advance_pipeline": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runFullPipeline",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Advance pipeline",
+            "description": "Verify \u2192 takeoff \u2192 estimate \u2192 proposal"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Pipeline Advancement",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "interval",
+      "cron_expression": null,
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": 4,
+      "interval_unit": "hours",
+      "interval_anchor": "2026-08-03T10:00:00Z",
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}

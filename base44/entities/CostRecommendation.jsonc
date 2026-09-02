@@ -1,0 +1,121 @@
+{
+  "name": "CostRecommendation",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "description": "Cost category this recommendation targets"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "potential_savings_monthly": {
+      "type": "number",
+      "description": "Estimated monthly savings if implemented"
+    },
+    "potential_savings_annual": {
+      "type": "number",
+      "description": "Estimated annual savings if implemented"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "ai_analysis": {
+      "type": "string",
+      "description": "LLM-generated analysis of the cost issue"
+    },
+    "action_steps": {
+      "type": "string",
+      "description": "JSON array of recommended action steps"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "implemented",
+        "dismissed"
+      ],
+      "default": "pending"
+    },
+    "confidence_score": {
+      "type": "number",
+      "description": "0-100 AI confidence in the recommendation"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "priority"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

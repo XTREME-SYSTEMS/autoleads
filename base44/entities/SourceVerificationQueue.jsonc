@@ -1,0 +1,147 @@
+{
+  "name": "SourceVerificationQueue",
+  "type": "object",
+  "properties": {
+    "source_id": {
+      "type": "string",
+      "description": "Links to ScrapeSource record"
+    },
+    "source_name": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "jurisdiction": {
+      "type": "string"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "UNVERIFIED",
+        "VERIFYING",
+        "ACTIVE",
+        "DEGRADED",
+        "AUTH_REQUIRED",
+        "LICENSE_REQUIRED",
+        "UNSUPPORTED",
+        "FAILED",
+        "QUARANTINED"
+      ],
+      "default": "UNVERIFIED"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "state_procurement",
+        "fdot",
+        "county_procurement",
+        "city_procurement",
+        "school_district",
+        "university",
+        "airport",
+        "port",
+        "transit",
+        "water_wastewater",
+        "special_district",
+        "housing_authority",
+        "public_works",
+        "permit",
+        "aggregator",
+        "other"
+      ],
+      "default": "other",
+      "description": "Priority category for Florida active-bid source ranking"
+    },
+    "platform": {
+      "type": "string",
+      "description": "Detected platform (Socrata, OpenGov, BidSync, custom, etc.)"
+    },
+    "data_type": {
+      "type": "string",
+      "enum": [
+        "active_bid",
+        "permit",
+        "planning",
+        "funding",
+        "news",
+        "award",
+        "closed",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "active_bid_capability": {
+      "type": "boolean",
+      "description": "True if this source yields actual contractor bid opportunities (not just permits/planning)"
+    },
+    "access_classification": {
+      "type": "string",
+      "enum": [
+        "public_readonly",
+        "login_required",
+        "oauth_required",
+        "license_required",
+        "partnership_required",
+        "paid_access",
+        "unsupported"
+      ],
+      "default": "public_readonly"
+    },
+    "health_receipt": {
+      "type": "string",
+      "description": "JSON string of health check results (HTTP status, response time, parser test)"
+    },
+    "last_verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "verified_by": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "source_name",
+    "url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "name": "OpportunitySourceRecord",
+  "type": "object",
+  "properties": {
+    "canonical_opportunity_id": {
+      "type": "string",
+      "description": "Links to the CanonicalOpportunity this source record proves"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "ScrapeSource record ID"
+    },
+    "source_name": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Direct URL to the opportunity on this source"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "government_portal",
+        "aggregator",
+        "email",
+        "api",
+        "manual",
+        "news",
+        "permit",
+        "agenda"
+      ],
+      "default": "api"
+    },
+    "retrieved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "content_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of source content at retrieval time for change detection"
+    },
+    "raw_data": {
+      "type": "string",
+      "description": "JSON string of raw source data for provenance audit"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "canonical_opportunity_id",
+    "source_url"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

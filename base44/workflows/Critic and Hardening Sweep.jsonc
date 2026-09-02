@@ -1,0 +1,45 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "critic_hardening_sweep",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_critic": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runCriticReview",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run critic review",
+            "description": "Adversarial review + email report"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Critic and Hardening Sweep",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 6 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Daily adversarial critic review of all pipeline artifacts \u2014 scores takeoffs/estimates/proposals, flags gaps, and emails a critique report to jeremy@xtremepolishingsystems.com."
+}

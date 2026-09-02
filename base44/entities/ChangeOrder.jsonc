@@ -1,0 +1,209 @@
+{
+  "name": "ChangeOrder",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Links to the Project this change order belongs to"
+    },
+    "proposal_id": {
+      "type": "string",
+      "description": "Links to the Proposal this change order modifies"
+    },
+    "change_order_number": {
+      "type": "string",
+      "description": "Sequential change order number (e.g. CO-001)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short title of the change order"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the change"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for the change (owner request, field condition, design change, etc.)"
+    },
+    "change_type": {
+      "type": "string",
+      "enum": [
+        "addition",
+        "deletion",
+        "modification",
+        "credit",
+        "time_extension",
+        "scope_change"
+      ],
+      "default": "addition",
+      "description": "Type of change"
+    },
+    "items": {
+      "type": "array",
+      "description": "Line items affected by this change order",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "unit_price": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "original_value": {
+      "type": "number",
+      "description": "Original contract/proposal value before this change"
+    },
+    "change_amount": {
+      "type": "number",
+      "description": "Dollar amount of this change (positive = addition, negative = credit)"
+    },
+    "new_total_value": {
+      "type": "number",
+      "description": "New total contract value after this change"
+    },
+    "time_impact_days": {
+      "type": "number",
+      "description": "Schedule impact in days (positive = extension)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "submitted",
+        "approved",
+        "rejected",
+        "executed"
+      ],
+      "default": "draft"
+    },
+    "requested_by": {
+      "type": "string",
+      "description": "Who requested the change (owner, contractor, architect, field)"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Who approved the change order"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "Link to the change order document"
+    },
+    "signature_status": {
+      "type": "string",
+      "enum": [
+        "not_sent",
+        "pending",
+        "signed",
+        "declined"
+      ],
+      "default": "not_sent"
+    },
+    "revision_number": {
+      "type": "number",
+      "default": 1,
+      "description": "Revision number if this change order was revised"
+    },
+    "revision_history": {
+      "type": "string",
+      "description": "JSON string of revision history with dates and descriptions"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "project_id",
+    "title",
+    "description",
+    "change_type"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

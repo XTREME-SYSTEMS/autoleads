@@ -1,0 +1,47 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "email_alert_notifications",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_alerts": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendEmailAlerts",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send email alert notifications",
+            "description": "Check for new leads, pending approvals, bid packages, contractor responses, deposits, and messages \u2014 then email the org owner"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Email Alert Notifications",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/30 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Every 30 minutes \u2014 checks for new leads matching each org's criteria, pending takeoff approvals, bid packages ready to send, contractor responses, deposit payments, and inbound contractor messages. Sends a consolidated email alert to the organization owner's signup email."
+}

@@ -1,0 +1,115 @@
+{
+  "name": "StateCoverage",
+  "type": "object",
+  "properties": {
+    "state_code": {
+      "type": "string",
+      "description": "2-letter US state code (e.g. FL, TX, CA)"
+    },
+    "state_name": {
+      "type": "string",
+      "description": "Full state name (e.g. Florida, Texas)"
+    },
+    "coverage_status": {
+      "type": "string",
+      "enum": [
+        "fully_covered",
+        "partially_covered",
+        "minimal",
+        "uncovered",
+        "in_progress"
+      ],
+      "default": "uncovered",
+      "description": "How well this state is covered by sources"
+    },
+    "total_sources": {
+      "type": "number",
+      "default": 0,
+      "description": "Total scrape sources for this state"
+    },
+    "active_sources": {
+      "type": "number",
+      "default": 0,
+      "description": "Sources currently active and returning data"
+    },
+    "failed_sources": {
+      "type": "number",
+      "default": 0,
+      "description": "Sources in error/failed status"
+    },
+    "auth_required_sources": {
+      "type": "number",
+      "default": 0,
+      "description": "Sources requiring credentials/registration"
+    },
+    "counties_covered": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of counties with at least one source"
+    },
+    "cities_covered": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of cities with at least one source"
+    },
+    "building_depts_tracked": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of building departments being tracked"
+    },
+    "data_types_collected": {
+      "type": "string",
+      "description": "JSON string of data types collected (active_bid, permit, planning, agenda, news, etc.)"
+    },
+    "source_names": {
+      "type": "string",
+      "description": "JSON string array of source names for this state"
+    },
+    "open_flags": {
+      "type": "number",
+      "default": 0,
+      "description": "Count of open SystemFlag records for this state"
+    },
+    "last_audit_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "state_code",
+    "state_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "name": "PipelineEvent",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "step": {
+      "type": "string",
+      "enum": [
+        "lead",
+        "takeoff",
+        "bid",
+        "email",
+        "followup",
+        "contract",
+        "payment",
+        "schedule"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "failed",
+        "blocked"
+      ],
+      "default": "pending"
+    },
+    "event_type": {
+      "type": "string"
+    },
+    "source_record_id": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "project_id",
+    "step",
+    "status",
+    "occurred_at"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

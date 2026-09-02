@@ -1,0 +1,118 @@
+{
+  "name": "ApiKey",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "key_name": {
+      "type": "string",
+      "description": "Human-readable label for this API key"
+    },
+    "key_prefix": {
+      "type": "string",
+      "description": "First 12 chars shown to user for identification"
+    },
+    "key_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the full key for verification"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "starter",
+        "pro",
+        "enterprise"
+      ],
+      "default": "free"
+    },
+    "rate_limit_per_hour": {
+      "type": "number",
+      "default": 100
+    },
+    "rate_limit_per_day": {
+      "type": "number",
+      "default": 1000
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "suspended",
+        "revoked"
+      ],
+      "default": "active"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_used_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "usage_count": {
+      "type": "number",
+      "default": 0
+    },
+    "allowed_endpoints": {
+      "type": "array",
+      "description": "API endpoints this key can access (e.g. 'leads', 'projects', 'estimates')",
+      "items": {
+        "type": "string"
+      }
+    },
+    "price_per_month": {
+      "type": "number",
+      "default": 0,
+      "description": "Monthly price charged for this API key access"
+    },
+    "stripe_product_id": {
+      "type": "string"
+    },
+    "buyer_email": {
+      "type": "string"
+    },
+    "buyer_name": {
+      "type": "string"
+    },
+    "created_by_name": {
+      "type": "string"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "key_name",
+    "tier"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

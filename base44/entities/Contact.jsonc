@@ -1,0 +1,130 @@
+{
+  "name": "Contact",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "company_name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "owner",
+        "architect",
+        "engineer",
+        "gc",
+        "subcontractor",
+        "supplier",
+        "other"
+      ],
+      "default": "other"
+    },
+    "relationship_strength": {
+      "type": "string",
+      "enum": [
+        "none",
+        "weak",
+        "moderate",
+        "strong"
+      ],
+      "default": "none"
+    },
+    "last_contact_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "full_name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

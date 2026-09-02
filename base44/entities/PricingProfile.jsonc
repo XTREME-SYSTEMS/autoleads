@@ -1,0 +1,305 @@
+{
+  "name": "PricingProfile",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "labor_weekly_cost": {
+      "type": "number"
+    },
+    "labor_hourly_rate": {
+      "type": "number"
+    },
+    "material_cost_low": {
+      "type": "number"
+    },
+    "material_cost_high": {
+      "type": "number"
+    },
+    "overhead_weekly": {
+      "type": "number"
+    },
+    "mandatory_margin_pct": {
+      "type": "number"
+    },
+    "material_pct": {
+      "type": "number"
+    },
+    "labor_pct": {
+      "type": "number"
+    },
+    "consumables_pct": {
+      "type": "number"
+    },
+    "preferred_margin_low": {
+      "type": "number"
+    },
+    "preferred_margin_high": {
+      "type": "number"
+    },
+    "pricing_tier": {
+      "type": "string",
+      "enum": [
+        "low",
+        "mid",
+        "high"
+      ],
+      "default": "mid"
+    },
+    "scope_pricing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "city_low": {
+            "type": "number"
+          },
+          "city_mid": {
+            "type": "number"
+          },
+          "city_high": {
+            "type": "number"
+          },
+          "county_low": {
+            "type": "number"
+          },
+          "county_mid": {
+            "type": "number"
+          },
+          "county_high": {
+            "type": "number"
+          },
+          "state_low": {
+            "type": "number"
+          },
+          "state_mid": {
+            "type": "number"
+          },
+          "state_high": {
+            "type": "number"
+          },
+          "region_low": {
+            "type": "number"
+          },
+          "region_mid": {
+            "type": "number"
+          },
+          "region_high": {
+            "type": "number"
+          },
+          "national_low": {
+            "type": "number"
+          },
+          "national_mid": {
+            "type": "number"
+          },
+          "national_high": {
+            "type": "number"
+          },
+          "winning_bid_price": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "winning_bid_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "project": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "winning_price": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "project_type": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pricing_timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "city": {
+            "type": "number"
+          },
+          "county": {
+            "type": "number"
+          },
+          "state": {
+            "type": "number"
+          },
+          "region": {
+            "type": "number"
+          },
+          "national": {
+            "type": "number"
+          },
+          "winning_bid": {
+            "type": "number"
+          },
+          "projected": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "winning_bid_intelligence": {
+      "type": "string"
+    },
+    "future_outlook": {
+      "type": "string"
+    },
+    "financial_intelligence": {
+      "type": "string"
+    },
+    "pricing_tiers_explanation": {
+      "type": "string",
+      "description": "AI-generated low/mid/high pricing guidance with a cost-factor explanation (travel, per diem, overnight, material, labor, overtime, tools, misc) for the user's commercial and government scopes, based on recent winning bids."
+    },
+    "scope_pricing_tiers": {
+      "type": "array",
+      "description": "Recommended low/mid/high pricing per scope based on commercial and government winning bids from the previous 3 months, plus cost factors and a competitor note.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "low": {
+            "type": "number"
+          },
+          "mid": {
+            "type": "number"
+          },
+          "high": {
+            "type": "number"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "cost_breakdown": {
+            "type": "string",
+            "description": "JSON string of cost factors: travel, per_diem, overnight, material, labor, overtime, tools, misc"
+          },
+          "competitor_note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "mandatory_margin_pct"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

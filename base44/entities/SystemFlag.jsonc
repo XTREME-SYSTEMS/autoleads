@@ -1,0 +1,144 @@
+{
+  "name": "SystemFlag",
+  "type": "object",
+  "properties": {
+    "flag_type": {
+      "type": "string",
+      "enum": [
+        "source_error",
+        "data_gap",
+        "compliance_issue",
+        "performance",
+        "security",
+        "stale_data",
+        "missing_coverage",
+        "auth_required",
+        "parser_error",
+        "duplicate_data"
+      ],
+      "default": "source_error",
+      "description": "Category of the flagged issue"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "target_type": {
+      "type": "string",
+      "enum": [
+        "source",
+        "state",
+        "county",
+        "city",
+        "trade",
+        "project",
+        "system",
+        "entity"
+      ],
+      "default": "source"
+    },
+    "target_id": {
+      "type": "string",
+      "description": "ID of the flagged item (source ID, state code, etc.)"
+    },
+    "target_name": {
+      "type": "string",
+      "description": "Human-readable name of the flagged item"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short title of the flag"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the problem"
+    },
+    "fix_description": {
+      "type": "string",
+      "description": "How to fix this issue (human-readable instructions)"
+    },
+    "fix_action": {
+      "type": "string",
+      "description": "The auto-fix action to execute (function name or action key)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "fixing",
+        "fixed",
+        "ignored",
+        "unfixable"
+      ],
+      "default": "open"
+    },
+    "auto_fix_available": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this flag can be auto-fixed"
+    },
+    "auto_fix_executed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the auto-fix was executed"
+    },
+    "fix_result": {
+      "type": "string",
+      "description": "Result of the auto-fix attempt"
+    },
+    "state_code": {
+      "type": "string",
+      "description": "2-letter state code if this flag is state-related"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "resolved_by": {
+      "type": "string"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "flag_type",
+    "severity",
+    "target_type",
+    "title",
+    "description"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

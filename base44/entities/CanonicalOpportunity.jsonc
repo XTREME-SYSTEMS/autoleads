@@ -1,0 +1,155 @@
+{
+  "name": "CanonicalOpportunity",
+  "type": "object",
+  "properties": {
+    "fingerprint": {
+      "type": "string",
+      "description": "Deterministic fingerprint for dedup and identity matching"
+    },
+    "strong_key": {
+      "type": "string",
+      "description": "High-confidence identifier (solicitation/bid/project number + authority)"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "description": "Factual public opportunity description extracted from source"
+    },
+    "authority": {
+      "type": "string"
+    },
+    "jurisdiction": {
+      "type": "string"
+    },
+    "detected_state": {
+      "type": "string",
+      "description": "2-letter US state code detected from jurisdiction/address"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "county": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "solicitation_number": {
+      "type": "string"
+    },
+    "bid_number": {
+      "type": "string"
+    },
+    "project_number": {
+      "type": "string"
+    },
+    "value": {
+      "type": "number"
+    },
+    "bid_due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "project_type": {
+      "type": "string"
+    },
+    "trade": {
+      "type": "string"
+    },
+    "first_seen_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_seen_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "freshness_status": {
+      "type": "string",
+      "enum": [
+        "FRESH",
+        "AGING",
+        "STALE",
+        "EXPIRED",
+        "CLOSED",
+        "AWARDED",
+        "CANCELLED",
+        "SOURCE_CHANGED",
+        "SOURCE_UNAVAILABLE",
+        "UNKNOWN"
+      ],
+      "default": "UNKNOWN"
+    },
+    "deadline_status": {
+      "type": "string",
+      "enum": [
+        "OPEN",
+        "CLOSING_SOON",
+        "OVERDUE",
+        "NO_DEADLINE",
+        "CLOSED"
+      ],
+      "default": "NO_DEADLINE"
+    },
+    "next_verification_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "fingerprint_state": {
+      "type": "string",
+      "enum": [
+        "CANONICAL",
+        "DISTINCT",
+        "POSSIBLE_DUPLICATE",
+        "CONFIRMED_DUPLICATE"
+      ],
+      "default": "CANONICAL"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "fingerprint",
+    "title"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

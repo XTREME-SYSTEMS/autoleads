@@ -1,0 +1,117 @@
+{
+  "name": "OrganizationMembership",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Organization this membership belongs to"
+    },
+    "organization_name": {
+      "type": "string",
+      "description": "Denormalized org name for display"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User who is a member"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Denormalized user email for invitation lookup"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "owner",
+        "admin",
+        "member"
+      ],
+      "default": "member",
+      "description": "Role within this organization (owner/admin/member). System admin is separate via User.role."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "invited",
+        "revoked"
+      ],
+      "default": "active"
+    },
+    "invited_by": {
+      "type": "string",
+      "description": "User ID of the inviter"
+    },
+    "invited_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "accepted_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "organization_id",
+    "user_id",
+    "role"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

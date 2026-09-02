@@ -1,0 +1,47 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "contractor_discovery",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "scrape_contractors": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "scrapeContractors",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Discover Florida contractors",
+            "description": "Scrapes GCs, flooring, concrete, remodelers, architects, property/facility managers and stores them for outreach"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Contractor Discovery",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * 1",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Weekly (Mon 9am ET) \u2014 autonomously scrapes Florida contractors across GC, flooring, concrete, remodeler, architect, property/facility manager trades and stores them in the Contractor database ready for outreach."
+}

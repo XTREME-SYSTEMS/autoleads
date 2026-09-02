@@ -1,0 +1,30 @@
+{
+  "name": "AUTOLEADS Construction Intelligence",
+  "short_name": "AutoLeads",
+  "description": "Autonomous construction opportunity intelligence, takeoff, proposals, and follow-up.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#f2df0d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://media.base44.com/images/public/6a6e5f6d8ef2d024c71818a5/905e336e7_generated_image.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://media.base44.com/images/public/6a6e5f6d8ef2d024c71818a5/905e336e7_generated_image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://media.base44.com/images/public/6a6e5f6d8ef2d024c71818a5/905e336e7_generated_image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

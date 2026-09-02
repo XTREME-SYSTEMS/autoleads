@@ -1,0 +1,47 @@
+{
+  "name": "Bid Outcome Tracker",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Daily check: finds delivered proposals past their bid due date and creates action items prompting the user to record win/loss outcomes.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "bid_outcome_tracker",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "track": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "trackBidOutcomes",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Track bid outcomes",
+            "description": "Creates action items for delivered bids past their due date"
+          }
+        }
+      }
+    ]
+  }
+}

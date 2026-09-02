@@ -1,0 +1,301 @@
+{
+  "name": "Project",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "description": "Verified project description extracted from the source"
+    },
+    "specs": {
+      "type": "string",
+      "description": "Project specifications (scope of work, materials, requirements) extracted from source documents"
+    },
+    "contract_info": {
+      "type": "string",
+      "description": "Contract / owner contact information (name, email, phone, address) extracted from source"
+    },
+    "project_type": {
+      "type": "string",
+      "description": "e.g. commercial, residential, municipal, industrial, renovation"
+    },
+    "jurisdiction": {
+      "type": "string"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "qualification",
+        "takeoff",
+        "estimating",
+        "proposal",
+        "submitted",
+        "follow_up",
+        "won",
+        "scheduled",
+        "in_progress",
+        "completed",
+        "invoiced",
+        "referral",
+        "lost"
+      ],
+      "default": "qualification"
+    },
+    "value": {
+      "type": "number"
+    },
+    "bid_due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "authority": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "trade": {
+      "type": "string"
+    },
+    "square_footage": {
+      "type": "number",
+      "description": "Total square footage of the floor area to be finished \u2014 the primary measurement for flooring takeoff. Extracted from source specs/plans when published."
+    },
+    "floor_finish": {
+      "type": "string",
+      "description": "Specified finished floor finish type (e.g. epoxy, polished concrete, VCT, LVT, polyaspartic, urethane cement). Extracted from source specs when published."
+    },
+    "confidence": {
+      "type": "number"
+    },
+    "bidability_score": {
+      "type": "number"
+    },
+    "plans_url": {
+      "type": "string",
+      "description": "Direct link to project plans/drawings download or planholder portal"
+    },
+    "addenda_url": {
+      "type": "string",
+      "description": "Link to addenda/clarifications page"
+    },
+    "prebid_meeting_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Pre-bid meeting / site walk date"
+    },
+    "documents": {
+      "type": "array",
+      "description": "Document links extracted from the source (plans, specs, addenda, bid forms)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "plans",
+              "specs",
+              "addenda",
+              "bid_form",
+              "document",
+              "other"
+            ]
+          }
+        }
+      }
+    },
+    "validation_completeness": {
+      "type": "number",
+      "description": "0-100 score of how complete the validation package is (specs, drawings, contacts, value, deadline, square footage, floor finish)"
+    },
+    "validation_gaps": {
+      "type": "string",
+      "description": "Comma-separated list of missing validation items (e.g. 'specs, drawings, value, square footage, floor finish')"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "unverified",
+        "verified",
+        "failed",
+        "incomplete"
+      ],
+      "default": "unverified"
+    },
+    "verified_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_raw_html": {
+      "type": "string",
+      "description": "The original raw source code (HTML) fetched from the source URL, preserved verbatim for traceability"
+    },
+    "source_readable_document": {
+      "type": "string",
+      "description": "Human-readable document (markdown) translated from the raw source code using the detected template"
+    },
+    "source_template_type": {
+      "type": "string",
+      "enum": [
+        "bid_invitation",
+        "rfp",
+        "rfq",
+        "permit_notice",
+        "addendum",
+        "plan_holder",
+        "generic"
+      ],
+      "default": "generic",
+      "description": "Which standard document template was used to translate the raw source"
+    },
+    "source_translated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the raw source was last translated into a human-readable document"
+    },
+    "source_pdf_url": {
+      "type": "string",
+      "description": "URL of the clean human-readable PDF document generated from the translated source + specs + scope of work"
+    },
+    "source_pdf_generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the human-readable source PDF was last generated"
+    },
+    "compiled_pdf_url": {
+      "type": "string",
+      "description": "URL of the professional compiled document (readable source + specs + takeoff measurements) generated for approved projects"
+    },
+    "compiled_pdf_generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the compiled project document was last generated"
+    },
+    "location_eligibility": {
+      "type": "string",
+      "enum": [
+        "IN_SERVICE_AREA",
+        "OUT_OF_SERVICE_AREA",
+        "UNKNOWN_LOCATION",
+        "BORDER_MARKET",
+        "MANUAL_OVERRIDE"
+      ],
+      "default": "UNKNOWN_LOCATION",
+      "description": "Server-authoritative location eligibility result from the canonical eligibility engine"
+    },
+    "location_explanation": {
+      "type": "string",
+      "description": "Human-readable explanation of the location eligibility determination"
+    },
+    "detected_state": {
+      "type": "string",
+      "description": "2-letter US state code detected from the jurisdiction/address, or empty if unparseable"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "source_url",
+    "jurisdiction",
+    "authority",
+    "trade",
+    "specs",
+    "contract_info",
+    "client_name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

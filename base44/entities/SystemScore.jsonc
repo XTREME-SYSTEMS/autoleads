@@ -1,0 +1,122 @@
+{
+  "name": "SystemScore",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "overall_health_score": {
+      "type": "number",
+      "description": "0-100 composite score"
+    },
+    "data_quality_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "pipeline_efficiency_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "security_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "ui_completeness_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "benchmark_rank": {
+      "type": "string",
+      "description": "e.g. '3rd of 8' or 'Not ranked'"
+    },
+    "score_breakdown": {
+      "type": "string",
+      "description": "JSON string of detailed sub-scores and notes"
+    },
+    "open_gaps": {
+      "type": "number",
+      "description": "Count of open SystemGap records at audit time"
+    },
+    "run_phase": {
+      "type": "string",
+      "enum": [
+        "audit",
+        "benchmark",
+        "integrity",
+        "heal",
+        "ui_audit"
+      ],
+      "default": "audit"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "overall_health_score"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

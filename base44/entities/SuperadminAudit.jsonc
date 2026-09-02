@@ -1,0 +1,93 @@
+{
+  "name": "SuperadminAudit",
+  "type": "object",
+  "properties": {
+    "superadmin_user_id": {
+      "type": "string",
+      "description": "User ID of the platform superadmin who performed the action"
+    },
+    "superadmin_email": {
+      "type": "string",
+      "description": "Email of the superadmin (denormalized for audit readability)"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "cross_org_read",
+        "cross_org_create",
+        "cross_org_update",
+        "cross_org_delete",
+        "cross_org_filter",
+        "system_config_change",
+        "user_management",
+        "data_intervention",
+        "other"
+      ],
+      "description": "Type of superadmin action performed"
+    },
+    "target_organization_id": {
+      "type": "string",
+      "description": "Organization that was accessed (if cross-org)"
+    },
+    "target_entity": {
+      "type": "string",
+      "description": "Entity type that was accessed"
+    },
+    "target_record_id": {
+      "type": "string",
+      "description": "Specific record ID accessed (if applicable)"
+    },
+    "reason_code": {
+      "type": "string",
+      "description": "Explicit reason for the superadmin action (required for audit trail)"
+    },
+    "details": {
+      "type": "string",
+      "description": "Additional context about the action"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_ip": {
+      "type": "string",
+      "description": "IP address of the superadmin (if available)"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "superadmin_user_id",
+    "action_type",
+    "reason_code",
+    "timestamp"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

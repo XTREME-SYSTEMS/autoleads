@@ -1,0 +1,47 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_email_response_scanner",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "scan_email": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "scanEmailResponses",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Scan email responses",
+            "description": "Scans Gmail for bid replies, questions, approvals, addendums, and change orders"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Daily Email Response Scanner",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 8,12,17 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "3x daily (8am, 12pm, 5pm ET) \u2014 scans Gmail for bid responses: questions, approvals, addendums, change orders, and additional info requests. Creates green flashing alerts on the dashboard."
+}

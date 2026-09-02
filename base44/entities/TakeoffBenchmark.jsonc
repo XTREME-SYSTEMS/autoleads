@@ -1,0 +1,178 @@
+{
+  "name": "TakeoffBenchmark",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Owning organization (empty for global benchmark records)"
+    },
+    "document_id": {
+      "type": "string",
+      "description": "ID of the source document (plan set)"
+    },
+    "document_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the document content for version integrity"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to the plan set document"
+    },
+    "plan_type": {
+      "type": "string",
+      "enum": [
+        "architectural",
+        "structural",
+        "site_plan",
+        "floor_plan",
+        "roof_plan",
+        "electrical",
+        "plumbing",
+        "other"
+      ],
+      "description": "Type of plan/drawing"
+    },
+    "sheet": {
+      "type": "string",
+      "description": "Sheet number/identifier within the plan set"
+    },
+    "scope_system": {
+      "type": "string",
+      "description": "Scope system being measured (e.g. Epoxy Flooring, TPO Roof)"
+    },
+    "system_code": {
+      "type": "string",
+      "description": "Scope system code (e.g. EF-FLAKE, RF-TPO)"
+    },
+    "ground_truth_quantity": {
+      "type": "number",
+      "description": "Known correct quantity from human review"
+    },
+    "ai_quantity": {
+      "type": "number",
+      "description": "Quantity produced by the AI takeoff"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit of measurement (e.g. SF, LF, EA)"
+    },
+    "absolute_error": {
+      "type": "number",
+      "description": "Absolute difference between AI and ground truth"
+    },
+    "percentage_error": {
+      "type": "number",
+      "description": "Percentage error relative to ground truth"
+    },
+    "evidence_provenance": {
+      "type": "string",
+      "description": "How the ground truth was established (human measurement, approved takeoff, etc.)"
+    },
+    "reviewer": {
+      "type": "string",
+      "description": "User who established the ground truth"
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "benchmark_result": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "marginal",
+        "pending"
+      ],
+      "default": "pending",
+      "description": "pass if %error < 5%, marginal if 5-10%, fail if > 10%"
+    },
+    "takeoff_id": {
+      "type": "string",
+      "description": "Links to the Takeoff record produced by the AI"
+    },
+    "model_version": {
+      "type": "string",
+      "description": "AI model version used for the takeoff"
+    },
+    "prompt_version": {
+      "type": "string",
+      "description": "Prompt version used for the takeoff"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "document_url",
+    "plan_type",
+    "ground_truth_quantity",
+    "ai_quantity",
+    "unit"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

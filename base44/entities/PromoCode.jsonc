@@ -1,0 +1,114 @@
+{
+  "name": "PromoCode",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "The promo code string customers enter at checkout (uppercase)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Internal description of what this promo is for"
+    },
+    "discount_type": {
+      "type": "string",
+      "enum": [
+        "percentage",
+        "fixed_amount",
+        "free_months"
+      ],
+      "default": "percentage",
+      "description": "How the discount is applied"
+    },
+    "discount_value": {
+      "type": "number",
+      "description": "Percentage (0-100), dollar amount, or number of free months"
+    },
+    "max_uses": {
+      "type": "number",
+      "default": 0,
+      "description": "Maximum times this code can be used (0 = unlimited)"
+    },
+    "used_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many times this code has been redeemed"
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "expired",
+        "exhausted"
+      ],
+      "default": "active"
+    },
+    "applicable_plans": {
+      "type": "string",
+      "default": "all",
+      "description": "Comma-separated plan keys or 'all'"
+    },
+    "min_purchase_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "stripe_coupon_id": {
+      "type": "string",
+      "description": "Stripe coupon ID for this promo"
+    },
+    "stripe_promo_id": {
+      "type": "string",
+      "description": "Stripe promotion code ID"
+    },
+    "created_by_name": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "code",
+    "discount_type",
+    "discount_value"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

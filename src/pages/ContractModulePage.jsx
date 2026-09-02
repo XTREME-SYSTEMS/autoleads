@@ -1,0 +1,4 @@
+import React from "react";
+import { Database, FileQuestion } from "lucide-react";
+import { Card, EmptyState, Page, PrimaryButton } from "@/components/autoleads/UiPrimitives";
+export default function ContractModulePage({title="AUTOLEADS Module",description="This governed module is connected through Base44 entities and functions.",action="Configure Module",backTo="/settings"}){return <Page backTo={backTo} title={title} description={description}><Card><EmptyState icon={Database} title={`No ${title.toLowerCase()} records yet`} description="The production package does not invent business records. Import or create verified records to begin." action={<PrimaryButton>{action}</PrimaryButton>}/></Card><Card className="mt-5"><EmptyState icon={FileQuestion} title="Loading, error, permission, and success states included" description="The route is ready for Base44 entity bindings, RLS, function calls, and acceptance tests."/></Card></Page>}

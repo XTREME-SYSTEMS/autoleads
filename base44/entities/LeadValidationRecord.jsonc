@@ -1,0 +1,271 @@
+{
+  "name": "LeadValidationRecord",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Owning organization (empty for global benchmark records)"
+    },
+    "source_name": {
+      "type": "string",
+      "description": "Name of the source that provided this opportunity"
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Direct URL to the opportunity on the source"
+    },
+    "source_category": {
+      "type": "string",
+      "enum": [
+        "government_portal",
+        "aggregator",
+        "permit",
+        "news",
+        "agenda",
+        "federal_api",
+        "email",
+        "manual"
+      ],
+      "default": "government_portal",
+      "description": "Category of the source for corpus composition tracking"
+    },
+    "corpus_role": {
+      "type": "string",
+      "enum": [
+        "candidate",
+        "negative_candidate"
+      ],
+      "default": "candidate",
+      "description": "Whether this record is a positive candidate or a negative candidate"
+    },
+    "canonical_opportunity_id": {
+      "type": "string",
+      "description": "Links to CanonicalOpportunity if one exists"
+    },
+    "ground_truth_classification": {
+      "type": "string",
+      "enum": [
+        "active_opportunity",
+        "not_an_opportunity",
+        "duplicate",
+        "expired",
+        "out_of_scope",
+        "pending_review"
+      ],
+      "default": "pending_review",
+      "description": "Human-reviewed ground truth classification. pending_review until a human reviews it."
+    },
+    "is_active_opportunity": {
+      "type": "boolean",
+      "description": "True if this is a real, active, pursuable opportunity"
+    },
+    "trade": {
+      "type": "string",
+      "description": "Trade category of the opportunity"
+    },
+    "location": {
+      "type": "string",
+      "description": "Location/jurisdiction of the opportunity"
+    },
+    "detected_state": {
+      "type": "string",
+      "description": "2-letter US state code"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Bid due date"
+    },
+    "published_value": {
+      "type": "number",
+      "description": "Published project value"
+    },
+    "contact_info": {
+      "type": "string",
+      "description": "Contact information extracted from source"
+    },
+    "provenance": {
+      "type": "string",
+      "description": "Source provenance trail (URL \u2192 scrape \u2192 extraction)"
+    },
+    "duplicate_status": {
+      "type": "string",
+      "enum": [
+        "unique",
+        "duplicate_of_existing",
+        "duplicate_of_new"
+      ],
+      "default": "unique"
+    },
+    "duplicate_of_id": {
+      "type": "string",
+      "description": "ID of the canonical record this is a duplicate of"
+    },
+    "reviewer": {
+      "type": "string",
+      "description": "User or agent who reviewed this record. Null means unreviewed."
+    },
+    "review_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed"
+      ],
+      "default": "pending",
+      "description": "Whether this record has been human-reviewed. UNREVIEWED != NEGATIVE."
+    },
+    "review_verdict": {
+      "type": "string",
+      "enum": [
+        "correct",
+        "partial",
+        "incorrect",
+        "insufficient_evidence"
+      ],
+      "description": "Reviewer's verdict on the system prediction"
+    },
+    "error_class": {
+      "type": "string",
+      "enum": [
+        "FALSE_ACTIVE_BID",
+        "MISSED_ACTIVE_BID",
+        "WRONG_CLASSIFICATION",
+        "WRONG_LOCATION",
+        "WRONG_TRADE",
+        "WRONG_DEADLINE",
+        "WRONG_VALUE",
+        "STALE_RECORD",
+        "DUPLICATE_FAILURE",
+        "SOURCE_PARSER_ERROR",
+        "INSUFFICIENT_SOURCE_EVIDENCE",
+        "OTHER"
+      ],
+      "description": "Classification of the underlying defect when a human reviewer marks a prediction as incorrect or partial"
+    },
+    "corrected_classification": {
+      "type": "string",
+      "enum": [
+        "active_opportunity",
+        "not_an_opportunity",
+        "duplicate",
+        "expired",
+        "out_of_scope"
+      ],
+      "description": "Reviewer's corrected classification (if different from system prediction)"
+    },
+    "original_prediction": {
+      "type": "string",
+      "description": "The system's original classification at record creation time. Never overwritten."
+    },
+    "prediction_version": {
+      "type": "string",
+      "description": "Version of the prediction model/logic used"
+    },
+    "system_classification": {
+      "type": "string",
+      "enum": [
+        "active_opportunity",
+        "not_an_opportunity",
+        "duplicate",
+        "expired",
+        "out_of_scope"
+      ],
+      "description": "What the system classified this as (for comparison with ground truth)"
+    },
+    "classification_match": {
+      "type": "boolean",
+      "description": "True if system classification matches reviewed ground truth"
+    },
+    "deadline_fidelity": {
+      "type": "boolean",
+      "description": "True if system-extracted deadline matches ground truth deadline"
+    },
+    "value_fidelity": {
+      "type": "boolean",
+      "description": "True if system-extracted value matches ground truth value (within 5%)"
+    },
+    "location_fidelity": {
+      "type": "boolean",
+      "description": "True if system-detected location matches ground truth location"
+    },
+    "trade_relevance": {
+      "type": "boolean",
+      "description": "True if system trade classification matches ground truth"
+    },
+    "source_provenance_complete": {
+      "type": "boolean",
+      "description": "True if full provenance trail is documented"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "source_url",
+    "ground_truth_classification"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

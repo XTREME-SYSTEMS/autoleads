@@ -1,0 +1,143 @@
+{
+  "name": "Payment",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "invoice_id": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "credit",
+        "debit",
+        "ach",
+        "cash",
+        "check"
+      ],
+      "default": "credit"
+    },
+    "provider": {
+      "type": "string",
+      "description": "Payment processor (e.g. stripe, manual)",
+      "default": "stripe"
+    },
+    "provider_status": {
+      "type": "string",
+      "description": "Raw status from the payment provider (e.g. requires_payment_method, succeeded)"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "Idempotency key used when creating the payment intent"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed",
+        "refunded"
+      ],
+      "default": "pending"
+    },
+    "stripe_payment_id": {
+      "type": "string"
+    },
+    "deposit_pct": {
+      "type": "number",
+      "description": "0, 10, 30, 50, or 100"
+    },
+    "payment_type": {
+      "type": "string",
+      "enum": [
+        "deposit",
+        "progress",
+        "final",
+        "full"
+      ],
+      "default": "deposit"
+    },
+    "transaction_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "amount"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

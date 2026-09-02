@@ -1,0 +1,111 @@
+{
+  "name": "System Autopilot",
+  "description": "Autonomous self-healing system: scores health, benchmarks competitors, purges stale data, enriches missing fields, fixes broken projects, hardens security, and audits UI completeness every 2 hours.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 */2 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "system_autopilot",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "audit": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runSystemAudit",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "benchmark",
+          "x-base44": {
+            "title": "Score system health",
+            "description": "Audits data, pipeline, security, UI"
+          }
+        }
+      },
+      {
+        "benchmark": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runBenchmarkResearch",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "integrity",
+          "x-base44": {
+            "title": "Research competitors",
+            "description": "Monthly benchmark research (skips if already done)"
+          }
+        }
+      },
+      {
+        "integrity": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runDataIntegrity",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "heal",
+          "x-base44": {
+            "title": "Purge & enrich data",
+            "description": "Deletes stale records, fills missing fields via web"
+          }
+        }
+      },
+      {
+        "heal": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runAutoHeal",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "ui_audit",
+          "x-base44": {
+            "title": "Auto-heal & harden",
+            "description": "Fixes, hardens, optimizes, enhances, evolves"
+          }
+        }
+      },
+      {
+        "ui_audit": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runUiAudit",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Audit UI completeness",
+            "description": "Checks pages, routes, stubs"
+          }
+        }
+      }
+    ]
+  }
+}

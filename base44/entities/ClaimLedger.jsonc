@@ -1,0 +1,142 @@
+{
+  "name": "ClaimLedger",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Owning organization for multi-tenant isolation"
+    },
+    "claim_text": {
+      "type": "string",
+      "description": "The marketing or product claim made (e.g. '500+ leads imported', '98% accuracy')"
+    },
+    "claim_location": {
+      "type": "string",
+      "description": "Where the claim appears (page route, component, marketing copy URL)"
+    },
+    "claim_type": {
+      "type": "string",
+      "enum": [
+        "metric",
+        "feature",
+        "performance",
+        "comparison",
+        "guarantee",
+        "testimonial",
+        "other"
+      ],
+      "default": "metric"
+    },
+    "evidence_query": {
+      "type": "string",
+      "description": "The query or method used to verify this claim (e.g. entity count, test result)"
+    },
+    "evidence_value": {
+      "type": "string",
+      "description": "The actual measured value at audit time"
+    },
+    "claim_value": {
+      "type": "string",
+      "description": "The value stated in the claim (for comparison with evidence_value)"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "exaggerated",
+        "unsubstantiated",
+        "false",
+        "outdated",
+        "pending"
+      ],
+      "default": "pending"
+    },
+    "verification_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "discrepancy_notes": {
+      "type": "string",
+      "description": "Explanation of any discrepancy between claim and evidence"
+    },
+    "remediation_action": {
+      "type": "string",
+      "description": "Action taken to fix an exaggerated or false claim (e.g. 'updated copy', 'removed claim')"
+    },
+    "remediation_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "audited_by": {
+      "type": "string",
+      "description": "Agent or user who performed the verification"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "claim_text",
+    "claim_location"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

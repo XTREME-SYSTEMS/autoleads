@@ -1,0 +1,177 @@
+{
+  "name": "SelfReflectionLog",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Owning organization (empty for global/service-role runs)"
+    },
+    "cycle_number": {
+      "type": "number",
+      "description": "Sequential cycle number for this org"
+    },
+    "triggered_by": {
+      "type": "string",
+      "enum": [
+        "workflow",
+        "manual",
+        "agent",
+        "system"
+      ],
+      "default": "workflow",
+      "description": "What triggered this reflection cycle"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "completed",
+        "failed",
+        "partial"
+      ],
+      "default": "running"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "description": "How long the reflection cycle took"
+    },
+    "pipeline_results": {
+      "type": "string",
+      "description": "JSON string of pipeline execution results (verified, takeoffs, estimates, proposals counts)"
+    },
+    "pre_scores": {
+      "type": "string",
+      "description": "JSON string of system scores BEFORE reflection fixes"
+    },
+    "post_scores": {
+      "type": "string",
+      "description": "JSON string of system scores AFTER reflection fixes"
+    },
+    "score_delta": {
+      "type": "number",
+      "description": "Overall score change (post - pre). Positive = improvement."
+    },
+    "flags_created": {
+      "type": "number",
+      "default": 0,
+      "description": "Total flags created during this cycle"
+    },
+    "flags_fixed": {
+      "type": "number",
+      "default": 0,
+      "description": "Flags auto-fixed during this cycle"
+    },
+    "flags_remaining": {
+      "type": "number",
+      "default": 0,
+      "description": "Flags still open after auto-fix attempts"
+    },
+    "emails_scanned": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of emails scanned for responses"
+    },
+    "email_responses_found": {
+      "type": "number",
+      "default": 0,
+      "description": "Bid-related email replies found"
+    },
+    "email_qa_issues": {
+      "type": "number",
+      "default": 0,
+      "description": "QA issues found in outbound emails"
+    },
+    "issues_identified": {
+      "type": "string",
+      "description": "JSON string array of issues identified during reflection"
+    },
+    "fixes_applied": {
+      "type": "string",
+      "description": "JSON string array of fixes applied during reflection"
+    },
+    "llm_analysis": {
+      "type": "string",
+      "description": "LLM self-reflection analysis of the pipeline run quality, issues, and recommendations"
+    },
+    "action_plan": {
+      "type": "string",
+      "description": "What was done and what still needs manual attention"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if the cycle failed"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "triggered_by",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

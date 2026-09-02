@@ -1,0 +1,101 @@
+{
+  "name": "ReviewBatch",
+  "type": "object",
+  "properties": {
+    "batch_id": {
+      "type": "string",
+      "description": "Human-readable batch identifier (e.g. BATCH-001)"
+    },
+    "record_ids": {
+      "type": "array",
+      "description": "LeadValidationRecord IDs assigned to this batch",
+      "items": {
+        "type": "string"
+      }
+    },
+    "record_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of records in this batch"
+    },
+    "assigned_reviewer": {
+      "type": "string",
+      "description": "User ID or name of the assigned reviewer"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "IN_REVIEW",
+        "COMPLETE"
+      ],
+      "default": "PENDING"
+    },
+    "source_distribution": {
+      "type": "string",
+      "description": "JSON string of source name \u2192 count distribution"
+    },
+    "category_distribution": {
+      "type": "string",
+      "description": "JSON string of source category \u2192 count distribution"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewed_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of records in this batch that have been reviewed"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "batch_id",
+    "record_ids"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

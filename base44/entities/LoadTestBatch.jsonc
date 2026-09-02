@@ -1,0 +1,135 @@
+{
+  "name": "LoadTestBatch",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Links to LoadTestRun"
+    },
+    "batch_number": {
+      "type": "number",
+      "description": "Sequential batch number within the run"
+    },
+    "org_contexts": {
+      "type": "number",
+      "description": "Number of org contexts in this batch"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "QUEUED",
+        "LEASED",
+        "RUNNING",
+        "COMPLETE",
+        "FAILED",
+        "DEAD_LETTER"
+      ],
+      "default": "QUEUED"
+    },
+    "lease_owner": {
+      "type": "string",
+      "description": "Worker ID that claimed this batch"
+    },
+    "lease_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the lease expires (for stale recovery)"
+    },
+    "heartbeat_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "attempts": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of processing attempts"
+    },
+    "max_attempts": {
+      "type": "number",
+      "default": 3
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "Unique key to prevent duplicate processing"
+    },
+    "operations_total": {
+      "type": "number",
+      "default": 0
+    },
+    "operations_completed": {
+      "type": "number",
+      "default": 0
+    },
+    "operations_failed": {
+      "type": "number",
+      "default": 0
+    },
+    "latencies_ms": {
+      "type": "string",
+      "description": "JSON array of operation latencies in milliseconds"
+    },
+    "p50_latency_ms": {
+      "type": "number"
+    },
+    "p95_latency_ms": {
+      "type": "number"
+    },
+    "p99_latency_ms": {
+      "type": "number"
+    },
+    "error_details": {
+      "type": "string",
+      "description": "Error messages from failed operations"
+    },
+    "rate_limit_hits": {
+      "type": "number",
+      "default": 0
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "failure_injection": {
+      "type": "string",
+      "description": "Type of failure injected into this batch (if any)"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "NON_PRODUCTION_EXAMPLE"
+    }
+  },
+  "required": [
+    "run_id",
+    "batch_number"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

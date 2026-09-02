@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#FFFFFF"/>
+  <rect x="24" y="24" width="464" height="464" rx="80" fill="none" stroke="#FFC400" stroke-width="8"/>
+  <text x="256" y="300" font-family="Arial, sans-serif" font-size="200" font-weight="900" text-anchor="middle" fill="#0B0B0B">AL</text>
+  <text x="256" y="380" font-family="Arial, sans-serif" font-size="48" font-weight="700" text-anchor="middle" fill="#FFC400" letter-spacing="4">AUTOLEADS</text>
+</svg>

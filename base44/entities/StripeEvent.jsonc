@@ -1,0 +1,66 @@
+{
+  "name": "StripeEvent",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "description": "Stripe event ID (evt_...) for idempotency tracking"
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Stripe event type (e.g. payment_intent.succeeded)"
+    },
+    "processed_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "processed",
+        "ignored",
+        "unmatched",
+        "error"
+      ],
+      "default": "processed"
+    },
+    "details": {
+      "type": "string",
+      "description": "Summary of what was processed"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "event_id",
+    "event_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

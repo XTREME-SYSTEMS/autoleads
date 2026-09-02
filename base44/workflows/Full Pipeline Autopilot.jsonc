@@ -1,0 +1,76 @@
+{
+  "name": "Full Pipeline Autopilot",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 */4 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Runs the full autonomous pipeline every 4 hours: scrape new leads, verify project accuracy against real sources, generate AI takeoffs, draft proposals, then self-reflect on the run \u2014 score, flag, auto-fix, auto-heal, and re-score.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "full_pipeline_autopilot",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "scrape": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runAutoScrape",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "pipeline"
+        }
+      },
+      {
+        "pipeline": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runFullPipeline",
+            "args": {
+              "_service_token": ""
+            }
+          },
+          "then": "reflect",
+          "x-base44": {
+            "title": "Verify, takeoff, and propose",
+            "description": "Verifies new projects, generates takeoffs, and drafts proposals"
+          }
+        }
+      },
+      {
+        "reflect": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "selfReflect",
+            "args": {
+              "_service_token": "",
+              "triggered_by": "workflow"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Self-reflect and auto-heal",
+            "description": "Evaluates the pipeline run, scores, checks emails, auto-fixes flags, auto-heals, re-scores, and logs the reflection"
+          }
+        }
+      }
+    ]
+  }
+}

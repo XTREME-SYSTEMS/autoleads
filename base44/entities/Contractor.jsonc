@@ -1,0 +1,167 @@
+{
+  "name": "Contractor",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Contractor company name"
+    },
+    "contact_name": {
+      "type": "string",
+      "description": "Contact person name if known"
+    },
+    "email": {
+      "type": "string",
+      "description": "Primary outreach email (lowercased)"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "trade": {
+      "type": "string",
+      "description": "e.g. general contractor, flooring, concrete, remodeler, architect, property manager"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string",
+      "default": "FL"
+    },
+    "county": {
+      "type": "string"
+    },
+    "license_number": {
+      "type": "string",
+      "description": "Florida contractor license number if visible"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "source_platform": {
+      "type": "string",
+      "description": "Where the contractor was discovered"
+    },
+    "outreach_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "intro_sent",
+        "followup_1",
+        "followup_2",
+        "followup_3",
+        "completed",
+        "unsubscribed",
+        "bounced"
+      ],
+      "default": "pending"
+    },
+    "followup_count": {
+      "type": "number",
+      "default": 0
+    },
+    "intro_sent_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_contacted_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "next_followup_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "replied": {
+      "type": "boolean",
+      "default": false
+    },
+    "notes": {
+      "type": "string"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "company_name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

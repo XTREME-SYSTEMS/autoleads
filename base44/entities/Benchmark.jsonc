@@ -1,0 +1,80 @@
+{
+  "name": "Benchmark",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "competitor_name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "construction_os",
+        "ai_takeoff",
+        "ai_bidding"
+      ],
+      "default": "construction_os"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pricing_model": {
+      "type": "string"
+    },
+    "ai_capabilities": {
+      "type": "string"
+    },
+    "market_position": {
+      "type": "string"
+    },
+    "differentiators": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "last_researched_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "autoleads_gap": {
+      "type": "string",
+      "description": "What AUTOLEADS lacks vs this competitor"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "competitor_name",
+    "category"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

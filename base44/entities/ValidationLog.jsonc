@@ -1,0 +1,134 @@
+{
+  "name": "ValidationLog",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Owning organization"
+    },
+    "gate": {
+      "type": "string",
+      "enum": [
+        "lead_intake",
+        "prepared_takeoff",
+        "bid_package"
+      ],
+      "description": "Which validation gate this log entry is for"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Project being validated"
+    },
+    "proposal_id": {
+      "type": "string",
+      "description": "Proposal being validated (bid_package gate)"
+    },
+    "checklist": {
+      "type": "string",
+      "description": "JSON string of mandatory checklist items with pass/fail status"
+    },
+    "passed_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of checklist items that passed"
+    },
+    "failed_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of checklist items that failed"
+    },
+    "remediation_actions": {
+      "type": "string",
+      "description": "JSON string of remediation actions taken to fix failures"
+    },
+    "remediation_triggered": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether any auto-remediation was triggered"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "remediated",
+        "blocked",
+        "failed"
+      ],
+      "default": "passed",
+      "description": "passed = all items passed; remediated = failures were auto-fixed; blocked = failures remain; failed = could not remediate"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Human-readable summary of the validation result"
+    },
+    "validated_by": {
+      "type": "string",
+      "description": "Agent or user who triggered the validation"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "gate",
+    "project_id",
+    "checklist"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

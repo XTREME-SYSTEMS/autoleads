@@ -1,0 +1,211 @@
+{
+  "name": "EsignDocument",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "proposal_id": {
+      "type": "string"
+    },
+    "contract_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "bid_package",
+        "contract",
+        "change_order",
+        "other"
+      ],
+      "default": "bid_package"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "sent",
+        "viewed",
+        "signed",
+        "declined",
+        "expired"
+      ],
+      "default": "draft"
+    },
+    "signers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "signed_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "signature_data": {
+            "type": "string"
+          },
+          "token_hash": {
+            "type": "string",
+            "description": "SHA-256 hash of the signing token sent to this signer"
+          },
+          "token_expires": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the signing token expires"
+          },
+          "token_consumed_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the token was used (replay protection)"
+          },
+          "signer_ip": {
+            "type": "string",
+            "description": "IP address of the signer for audit"
+          }
+        }
+      }
+    },
+    "document_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of document content at creation for version integrity"
+    },
+    "signing_audit_log": {
+      "type": "array",
+      "description": "Immutable record of all signing events",
+      "items": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "created",
+              "sent",
+              "viewed",
+              "signed",
+              "declined",
+              "expired",
+              "token_denied"
+            ]
+          },
+          "signer_email": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "expires_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

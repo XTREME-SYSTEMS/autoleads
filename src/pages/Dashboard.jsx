@@ -1,0 +1,35 @@
+import React,{useEffect,useMemo,useState} from "react";
+import {ArrowRight,FileCheck2,PackageCheck,ShieldCheck,Brain,ListChecks} from "lucide-react";
+import {useNavigate} from "react-router-dom";
+import {base44} from "@/api/base44Client";
+import {useAuth} from "@/lib/AuthContext";
+import {Surface} from "@/components/CommercialMobileUI";
+import EmailAlertCard from "@/components/dashboard/EmailAlertCard";
+import TurboTimeline from "@/components/dashboard/TurboTimeline";
+import PipelineTimeline from "@/components/dashboard/PipelineTimeline";
+import MorningActionButtons from "@/components/dashboard/MorningActionButtons";
+import PipelineKanban from "@/components/dashboard/PipelineKanban";
+
+const ACTIVE=["qualification","takeoff","estimating","proposal","submitted"];
+export default function Dashboard(){
+  const nav=useNavigate(); const {user}=useAuth();
+  const [data,setData]=useState({projects:[],proposals:[],actions:[],invoices:[],payments:[],notifications:[]}); const [loading,setLoading]=useState(true); const [refreshKey,setRefreshKey]=useState(0);
+  useEffect(()=>{let live=true;(async()=>{const [projects,proposals,actions,invoices,payments,notifications]=await Promise.all([
+    base44.entities.Project.list('-created_date',300).catch(()=>[]),base44.entities.Proposal.list('-created_date',300).catch(()=>[]),base44.entities.ActionItem.list('-created_date',200).catch(()=>[]),base44.entities.Invoice.list('-created_date',200).catch(()=>[]),base44.entities.Payment.list('-created_date',200).catch(()=>[]),base44.entities.Notification.list('-created_date',100).catch(()=>[])
+  ]);if(live){setData({projects:projects||[],proposals:proposals||[],actions:actions||[],invoices:invoices||[],payments:payments||[],notifications:notifications||[]});setLoading(false)}})();return()=>{live=false}},[refreshKey]);
+  const emailAlerts=useMemo(()=>(data.notifications||[]).filter(n=>['bid_response','award','approval','question','addendum','change_order','additional_info_request'].includes(n.type)&&!n.read).slice(0,5),[data.notifications]);
+  const qaFlags=useMemo(()=>(data.notifications||[]).filter(n=>n.type==='task'&&n.title?.includes('QA')).slice(0,3),[data.notifications]);
+  const metrics=useMemo(()=>{const proposalProjects=new Set(data.proposals.filter(p=>!["rejected","lost"].includes(p.status)).map(p=>p.project_id));const qualificationLeads=data.projects.filter(p=>p.stage==='qualification');const opportunities=data.projects.filter(p=>ACTIVE.includes(p.stage)&&!proposalProjects.has(p.id));const approvals=data.proposals.filter(p=>["draft","internal_review"].includes(p.status));const takeoffs=data.projects.filter(p=>p.stage==='takeoff');const emailReady=data.proposals.filter(p=>["approved","ready","pending_send"].includes(p.status));const openActions=data.actions.filter(a=>a.status==="open");const paid={};data.payments.filter(p=>p.status==="completed").forEach(p=>{paid[p.invoice_id]=(paid[p.invoice_id]||0)+Number(p.amount||0)});const waiting=data.invoices.reduce((sum,i)=>sum+Math.max(0,Number(i.total||0)-Number(paid[i.id]||0)),0);return{qualificationLeads,opportunities,approvals,takeoffs,emailReady,openActions,waiting}},[data]);
+  const firstName=(user?.full_name||user?.email||"Builder").split(/[ @]/)[0]||"Builder";
+  return <div className="flex h-[calc(100dvh-66px-90px)] flex-col overflow-y-auto bg-white px-5 pt-3 pb-4 text-[#050708] sm:px-7 lg:px-10">
+    <div className="mb-1"><p className="text-[18px] font-medium tracking-[-.02em]">Good morning, <span className="text-[#E9A900]">{firstName}</span></p><p className="text-xs text-black/45">☀ Let's win today.</p></div>
+    <h1 className="font-brand text-[30px] font-bold uppercase leading-[.95] tracking-[-.025em]">Start My Day</h1><div className="mt-1.5 h-[3px] w-24 rounded-full bg-[#FFC400]"/>
+    <MorningActionButtons leadsCount={metrics.qualificationLeads.length} qualificationLeads={metrics.qualificationLeads} onRefresh={()=>setRefreshKey(k=>k+1)} onGoLeads={()=>nav('/leads')}/>
+    <div className="mt-3"><PipelineTimeline projects={data.projects} onNavigate={nav} loading={loading}/></div>
+    <PipelineKanban projects={data.projects} onMoved={()=>setRefreshKey(k=>k+1)}/>
+    {emailAlerts.length>0&&<EmailAlertCard alerts={emailAlerts}/>}
+    {qaFlags.length>0&&<Surface className="mt-3 border-2 border-amber-400 bg-amber-50 p-3"><div className="flex items-center gap-2"><span className="text-lg">⚠️</span><p className="font-brand text-[12px] font-bold uppercase tracking-wide text-amber-700">QA Flags</p></div><div className="mt-1.5 space-y-1">{qaFlags.map(n=><button key={n.id} onClick={()=>nav('/messages')} className="block w-full truncate text-left text-xs font-semibold text-amber-800">{n.title}</button>)}</div></Surface>}
+    <div className="mt-3"><TurboTimeline metrics={metrics} projects={data.projects} onRefresh={()=>setRefreshKey(k=>k+1)}/></div>
+    <div className="mt-3 grid grid-cols-4 gap-2"><button onClick={()=>nav('/takeoff-review')} className="relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-[12px] border-2 border-[#FFC400] bg-white font-brand text-[9px] font-bold uppercase tracking-wide text-black"><FileCheck2 size={16} className="text-[#D99D00]"/>Takeoffs{data.projects.filter(p=>p.stage==='takeoff').length>0&&<span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-[#FFC400] px-1 text-[10px] font-black animate-pulse-emerald">{data.projects.filter(p=>p.stage==='takeoff').length}</span>}</button><button onClick={()=>nav('/bid-final-review')} className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-[12px] bg-[#FFC400] font-brand text-[9px] font-bold uppercase tracking-wide text-black"><PackageCheck size={16}/>Bid Pkg</button><button onClick={()=>nav('/validation-gates')} className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-[12px] border-2 border-emerald-400 bg-emerald-50 font-brand text-[9px] font-bold uppercase tracking-wide text-emerald-700"><ShieldCheck size={16}/>Gates</button><button onClick={()=>nav('/self-reflection')} className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-[12px] border-2 border-violet-400 bg-violet-50 font-brand text-[9px] font-bold uppercase tracking-wide text-violet-700"><Brain size={16}/>Reflect</button></div>
+    <div className="mt-3 grid grid-cols-2 gap-2"><button onClick={()=>nav('/bulk-takeoff-review')} className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-[12px] border-2 border-blue-400 bg-blue-50 font-brand text-[9px] font-bold uppercase tracking-wide text-blue-700"><ListChecks size={16}/>Bulk Takeoff Review</button><button onClick={()=>nav('/takeoff-documents')} className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-[12px] border-2 border-violet-400 bg-violet-50 font-brand text-[9px] font-bold uppercase tracking-wide text-violet-700"><FileCheck2 size={16}/>Doc Center</button></div>
+  </div>}

@@ -1,0 +1,139 @@
+{
+  "name": "PaymentPreference",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "deposit_required": {
+      "type": "boolean",
+      "default": true
+    },
+    "deposit_pct": {
+      "type": "number",
+      "description": "0 = no deposit, 10, 30, 50, or 100",
+      "default": 10
+    },
+    "payment_schedule": {
+      "type": "string",
+      "enum": [
+        "paid_when_complete",
+        "milestone",
+        "custom",
+        "net_15",
+        "net_30",
+        "net_60"
+      ],
+      "default": "milestone"
+    },
+    "accepted_methods": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "credit",
+          "debit",
+          "ach",
+          "cash",
+          "check"
+        ]
+      },
+      "default": [
+        "credit",
+        "debit",
+        "ach"
+      ]
+    },
+    "terms_net_days": {
+      "type": "number",
+      "default": 30
+    },
+    "milestone_schedule": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "pct": {
+            "type": "number"
+          },
+          "trigger": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "deposit_pct"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

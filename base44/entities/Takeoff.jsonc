@@ -1,0 +1,154 @@
+{
+  "name": "Takeoff",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string",
+      "description": "Scope system name (e.g. Flake Epoxy Floor, TPO Roof)"
+    },
+    "system_code": {
+      "type": "string",
+      "description": "Scope system code (e.g. EF-FLAKE, RF-TPO)"
+    },
+    "document_id": {
+      "type": "string"
+    },
+    "sheet": {
+      "type": "string"
+    },
+    "page": {
+      "type": "number"
+    },
+    "scale": {
+      "type": "string"
+    },
+    "calibrated": {
+      "type": "boolean",
+      "default": false
+    },
+    "measurement_formula": {
+      "type": "string"
+    },
+    "raw_quantity": {
+      "type": "number"
+    },
+    "waste_factor": {
+      "type": "number"
+    },
+    "final_quantity": {
+      "type": "number"
+    },
+    "unit": {
+      "type": "string"
+    },
+    "spec_evidence": {
+      "type": "string"
+    },
+    "addendum_evidence": {
+      "type": "string"
+    },
+    "model_version": {
+      "type": "string"
+    },
+    "prompt_version": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number"
+    },
+    "reviewer_decision": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "approval_state": {
+      "type": "string",
+      "enum": [
+        "unreviewed",
+        "in_review",
+        "approved"
+      ],
+      "default": "unreviewed"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "project_id"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": { "$in": "{{user.data.organization_ids}}" }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
