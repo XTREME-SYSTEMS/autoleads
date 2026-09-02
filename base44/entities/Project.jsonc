@@ -211,6 +211,20 @@
       "type": "string",
       "description": "2-letter US state code detected from the jurisdiction/address, or empty if unparseable"
     },
+    "customer_type": {
+      "type": "string",
+      "enum": [
+        "homeowner_direct",
+        "homeowner_community",
+        "homeowner_budget",
+        "permit_derived",
+        "investor_flipper",
+        "adjacent_trade",
+        "commercial_gov_bid",
+        "commercial_cre"
+      ],
+      "description": "Customer archetype \u2014 drives which handling pipeline, outreach sequence, and proposal template this lead receives. Classified by classifyCustomerType from the source URL."
+    },
     "data_class": {
       "type": "string",
       "enum": [

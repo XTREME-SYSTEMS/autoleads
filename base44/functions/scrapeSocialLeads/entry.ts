@@ -6,6 +6,7 @@ import {
   RESIDENTIAL_SERVICES, SOURCE_TAXONOMY, buildQueryFamilies, scoreResidentialLead,
   RESIDENTIAL_LEAD_SCHEMA, INTENT_BRIEF, MAJOR_CITIES_BY_STATE,
 } from '../../shared/residentialScrapeConfig.ts';
+import { classifyProject } from '../../shared/customerArchetypes.ts';
 
 // Residential demand-intelligence ingestion. Uses the structured taxonomy in
 // residentialScrapeConfig.ts: full service scope, intent classification, query
@@ -47,7 +48,7 @@ async function createSocialLead(client: any, orgId: string, lead: any): Promise<
       evidence_excerpt: lead.evidence_excerpt, referral_partner: lead.referral_partner,
       diy_only: lead.diy_only, lead_score: score,
     };
-    await client.entities.Project.create({
+    const projectData = {
       organization_id: orgId,
       title: String(lead.title).slice(0, 200),
       description: lead.evidence_excerpt || lead.description || '',
@@ -64,7 +65,9 @@ async function createSocialLead(client: any, orgId: string, lead: any): Promise<
       confidence: Math.max(0, Math.min(1, score / 100)),
       verification_status: 'unverified',
       data_class: 'production',
-    });
+    };
+    projectData.customer_type = classifyProject(projectData);
+    await client.entities.Project.create(projectData);
     return { created: true };
   } catch {
     return { created: false };
