@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authenticate } from '../../shared/internalAuth.ts';
 import { forEachOrganization, resolveUserOrgs } from '../../shared/orgContext.ts';
 import { FREE_EVAL_INTRO_EMAIL, FREE_EVAL_FOLLOWUP_EMAIL, renderFreeEvalTemplate, FROM_NAME } from '../../shared/freeEvaluationOutreach.ts';
+import { sendEmailTo, normalizeContact, nextDateIso, nowIso, EMAIL_RE } from '../../shared/outreachUtils.ts';
 
 // Sends the "Free Project Cost Evaluation" introduction email to contact-only
 // leads (Contractors, Contacts, or any entity with an email but no project
@@ -16,32 +17,9 @@ const FOLLOWUP_INTERVAL_DAYS = 5;
 const INTRO_CAP = 25;
 const FOLLOWUP_CAP = 35;
 
-const EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
-
-async function sendEmailTo(client: any, user: any, to: string, subject: string, bodyHtml: string): Promise<boolean> {
-  if (!to) return false;
-  if (user) {
-    try { const r: any = await client.functions.invoke('sendEmail', { to, subject, body: bodyHtml, from_name: FROM_NAME }); return Boolean(r?.success); }
-    catch { return false; }
-  }
-  try { const r: any = await client.integrations.Core.SendEmail({ to, subject, body: bodyHtml, from_name: FROM_NAME }); return !r?.error; }
-  catch { return false; }
-}
-
-// Normalize any contact-shaped record into something the template can render.
-function normalizeContact(c: any): any {
-  return {
-    contact_name: c.contact_name || c.full_name || c.name || '',
-    company_name: c.company_name || c.company || '',
-    email: c.email || '',
-    ...c,
-  };
-}
-
 async function runForOrg(client: any, orgId: string, user: any): Promise<any> {
-  const now = new Date();
-  const nowIso = now.toISOString();
-  const nextDate = (days: number) => new Date(now.getTime() + days * 24 * 3600 * 1000).toISOString();
+  const now = nowIso();
+  const nextDate = (days: number) => nextDateIso(days);
 
   let introsSent = 0, introFailed = 0, followupsSent = 0, followupFailed = 0, completed = 0;
 

@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authenticate } from '../../shared/internalAuth.ts';
 import { forEachOrganization, resolveUserOrgs } from '../../shared/orgContext.ts';
 import { INTRO_EMAIL, FOLLOWUP_EMAILS, renderTemplate, FROM_NAME } from '../../shared/contractorOutreach.ts';
+import { sendEmailTo, nextDateIso, nowIso, EMAIL_RE } from '../../shared/outreachUtils.ts';
 
 // Autonomous contractor outreach engine. Sends the branded intro email to
 // pending contractors, then follow-ups every ~4 days (3-email sequence) to
@@ -12,22 +13,10 @@ const FOLLOWUP_INTERVAL_DAYS = 4;
 const INTRO_CAP = 20;
 const FOLLOWUP_CAP = 30;
 
-async function sendEmailTo(client: any, user: any, to: string, subject: string, bodyHtml: string): Promise<boolean> {
-  if (!to) return false;
-  if (user) {
-    try { const r: any = await client.functions.invoke('sendEmail', { to, subject, body: bodyHtml, from_name: FROM_NAME }); return Boolean(r?.success); }
-    catch { return false; }
-  }
-  try { const r: any = await client.integrations.Core.SendEmail({ to, subject, body: bodyHtml, from_name: FROM_NAME }); return !r?.error; }
-  catch { return false; }
-}
-
 async function runForOrg(client: any, orgId: string, user: any): Promise<any> {
-  const now = new Date();
-  const nowIso = now.toISOString();
-  const nextDate = (days: number) => new Date(now.getTime() + days * 24 * 3600 * 1000).toISOString();
+  const now = nowIso();
+  const nextDate = (days: number) => nextDateIso(days);
 
-  const EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
   // 1. Intro emails to pending contractors
   const pending = await client.entities.Contractor.filter({ organization_id: orgId, outreach_status: 'pending' }, 'created_date', INTRO_CAP).catch(() => []);
   let introsSent = 0, introFailed = 0;

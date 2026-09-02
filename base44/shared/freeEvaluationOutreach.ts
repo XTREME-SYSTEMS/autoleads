@@ -12,6 +12,8 @@
 
 import { COMPANY, FROM_NAME } from './contractorOutreach.ts';
 
+export { FROM_NAME };
+
 function shell(inner: string): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f4f4f5;font-family:Arial,Helvetica,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:28px 0;">

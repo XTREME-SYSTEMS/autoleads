@@ -13,11 +13,13 @@ import { authenticate } from '../../shared/internalAuth.ts';
 import { resolveUserOrgs, scopedFilter } from '../../shared/orgContext.ts';
 import { DEMAND_SOURCES } from '../../shared/floridaDemandSources.ts';
 import { FLORIDA_RESIDENTIAL_SOURCES } from '../../shared/floridaResidentialSources.ts';
+import { UNIVERSAL_LEAD_SOURCES } from '../../shared/universalLeadSources.ts';
 import { cloudBrowserExtract, isCloudBrowserConfigured } from '../../shared/cloudBrowserClient.ts';
 
-// Merge commercial/government demand sources with the exhaustive Florida
-// residential source catalog (all 67 counties, cities, social, forums, etc.)
-const ALL_SOURCES = [...DEMAND_SOURCES, ...FLORIDA_RESIDENTIAL_SOURCES];
+// Merge commercial/government demand sources + exhaustive Florida residential
+// catalog + universal contact-discovery sources (homeowner posting sites,
+// property managers, HOAs, investors, restoration networks, associations, etc.)
+const ALL_SOURCES = [...DEMAND_SOURCES, ...FLORIDA_RESIDENTIAL_SOURCES, ...UNIVERSAL_LEAD_SOURCES];
 
 async function directReachable(targetUrl: string): Promise<{ ok: boolean; status?: number; error?: string }> {
   try {
