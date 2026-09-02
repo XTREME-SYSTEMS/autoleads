@@ -13,8 +13,9 @@ import {useOrgTradeFilter} from "@/hooks/useOrgTradeFilter";
 
 const ACTIVE=["qualification","takeoff","estimating","proposal","submitted"];
 export default function LeadFeed(){
-  const nav=useNavigate();   const {records,loading}=useEntityList("Project",{sort:"-bid_due_date",limit:250,refreshKey});
-  const [busy,setBusy]=useState(null); const [selected,setSelected]=useState(new Set()); const [gathering,setGathering]=useState(false); const [passTarget,setPassTarget]=useState(null); const [reason,setReason]=useState(""); const [selState,setSelState]=useState(""); const [selCities,setSelCities]=useState([]); const [selTrades,setSelTrades]=useState([]); const [scraping,setScraping]=useState(false);   const [expanded,setExpanded]=useState(new Set()); const [cat,setCat]=useState("residential"); const [deleting,setDeleting]=useState(false); const [confirmDeleteAll,setConfirmDeleteAll]=useState(false); const [refreshKey,setRefreshKey]=useState(0);
+  const nav=useNavigate();   const [refreshKey,setRefreshKey]=useState(0);
+  const {records,loading}=useEntityList("Project",{sort:"-bid_due_date",limit:250,refreshKey});
+  const [busy,setBusy]=useState(null); const [selected,setSelected]=useState(new Set()); const [gathering,setGathering]=useState(false); const [passTarget,setPassTarget]=useState(null); const [reason,setReason]=useState(""); const [selState,setSelState]=useState(""); const [selCities,setSelCities]=useState([]); const [selTrades,setSelTrades]=useState([]); const [scraping,setScraping]=useState(false);   const [expanded,setExpanded]=useState(new Set()); const [cat,setCat]=useState("residential"); const [deleting,setDeleting]=useState(false); const [confirmDeleteAll,setConfirmDeleteAll]=useState(false);
   const {orgId}=useOrgContext();
   const {matchesTrade}=useOrgTradeFilter();
   useEffect(()=>{if(!orgId)return;let live=true;(async()=>{const org=await base44.entities.Organization.get(orgId).catch(()=>null);if(!live||!org)return;const tokens=[...new Set((org.trade||"").toLowerCase().split(/[,/]+/).flatMap(s=>s.trim().split(/\s+/)).map(s=>s.trim()).filter(s=>s.length>=4))];if(tokens.length)setSelTrades(tokens);})();return()=>{live=false}},[orgId]);
