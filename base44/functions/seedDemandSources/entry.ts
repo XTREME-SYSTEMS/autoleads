@@ -12,7 +12,12 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { authenticate } from '../../shared/internalAuth.ts';
 import { resolveUserOrgs, scopedFilter } from '../../shared/orgContext.ts';
 import { DEMAND_SOURCES } from '../../shared/floridaDemandSources.ts';
+import { FLORIDA_RESIDENTIAL_SOURCES } from '../../shared/floridaResidentialSources.ts';
 import { cloudBrowserExtract, isCloudBrowserConfigured } from '../../shared/cloudBrowserClient.ts';
+
+// Merge commercial/government demand sources with the exhaustive Florida
+// residential source catalog (all 67 counties, cities, social, forums, etc.)
+const ALL_SOURCES = [...DEMAND_SOURCES, ...FLORIDA_RESIDENTIAL_SOURCES];
 
 async function directReachable(targetUrl: string): Promise<{ ok: boolean; status?: number; error?: string }> {
   try {
@@ -69,7 +74,7 @@ export default async function(req: Request): Promise<Response> {
 
     let seeded = 0;
     let duplicates = 0;
-    for (const s of DEMAND_SOURCES) {
+    for (const s of ALL_SOURCES) {
       if (!s.url || !isSafeUrl(s.url) || existingUrls.has(s.url)) { duplicates++; continue; }
       await client.entities.ScrapeSource.create({
         organization_id: orgId,
