@@ -553,19 +553,19 @@
     },
     {
       "function_name": "runSystemAudit",
-      "description": "Run a full system audit \u2014 scores every layer and logs SystemGap/SystemFlag records"
+      "description": "Run full system audit \u2014 scores every layer"
     },
     {
       "function_name": "runDataIntegrity",
-      "description": "Validate data integrity \u2014 find orphans, duplicates, nulls, stale records"
+      "description": "Validate data integrity"
     },
     {
       "function_name": "runAutoHeal",
-      "description": "Auto-heal the system \u2014 fix broken projects, harden security, fix flags"
+      "description": "Auto-heal the system \u2014 fix gaps and flags"
     },
     {
       "function_name": "runAutoScrape",
-      "description": "Trigger a lead discovery scrape cycle"
+      "description": "Trigger lead discovery scrape cycle"
     },
     {
       "function_name": "runFullPipeline",
@@ -581,7 +581,7 @@
     },
     {
       "function_name": "runUiAudit",
-      "description": "Audit every page route for data backing and completeness"
+      "description": "Audit every page for completeness"
     },
     {
       "function_name": "runStateCoverageAudit",
@@ -589,7 +589,7 @@
     },
     {
       "function_name": "runBenchmarkResearch",
-      "description": "Research competitor platforms and store Benchmark records"
+      "description": "Research competitor platforms"
     },
     {
       "function_name": "runRecursiveAudit",
@@ -597,11 +597,11 @@
     },
     {
       "function_name": "runCriticReview",
-      "description": "Run adversarial critic review on takeoffs/proposals"
+      "description": "Run adversarial critic review"
     },
     {
       "function_name": "selfReflect",
-      "description": "Run a self-reflection cycle on the last pipeline run"
+      "description": "Run a self-reflection cycle"
     },
     {
       "function_name": "autoCleanSystem",
@@ -613,7 +613,7 @@
     },
     {
       "function_name": "autoTakeoff",
-      "description": "Generate an AI takeoff with quantities from project specs"
+      "description": "Generate AI takeoff from project specs"
     },
     {
       "function_name": "autoProposals",
@@ -986,6 +986,7 @@
   "voice_config": {
     "voice_id": null
   },
+  "emails_settings": null,
   "allow_anonymous_access": false,
   "name": "autonomous_executor"
 }

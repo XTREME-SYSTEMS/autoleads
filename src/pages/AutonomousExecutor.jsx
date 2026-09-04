@@ -42,9 +42,9 @@ function MessageBubble({ message }) {
   );
 }
 
-function ToolCallDisplay({ toolCall }) {
+function ToolCallDisplay({ toolCall: tc }) {
   const [expanded, setExpanded] = useState(false);
-  const status = toolCall.status || "pending";
+  const status = tc.status || "pending";
   const isFailed = ["failed", "error"].includes(status) || /error|failed/i.test(String(tc.results || ""));
   const icon = status === "completed" || status === "success" ? "✓" : isFailed ? "✗" : "⟳";
   const color = status === "completed" || status === "success" ? "text-emerald-600" : isFailed ? "text-red-500" : "text-amber-500";
