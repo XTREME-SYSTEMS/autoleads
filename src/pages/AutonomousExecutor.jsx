@@ -140,19 +140,20 @@ export default function AutonomousExecutor() {
   const send = async (text) => {
     const content = text || input;
     if (!content.trim() || sending) return;
-    if (!activeId) {
-      // auto-create a conversation if none exists
-      await newConversation();
-      // retry send after creation — but we need the new ID, so just set input and let user click again
-      // Actually, let's create then send in one flow
-    }
 
     setSending(true);
     setInput("");
     try {
-      const conv = conversations.find(c => c.id === activeId) || await base44.agents.getConversation(activeId);
+      let conv = activeId ? conversations.find(c => c.id === activeId) : null;
+      if (!conv) {
+        conv = await base44.agents.createConversation({
+          agent_name: AGENT_NAME,
+          metadata: { name: `Autonomous Run ${new Date().toLocaleString()}`, description: "Autonomous executor session" },
+        });
+        setConversations(prev => [conv, ...prev]);
+        setActiveId(conv.id);
+      }
       await base44.agents.addMessage(conv, { role: "user", content });
-      // subscription will update messages
     } catch (e) {
       alert("Send failed: " + (e?.message || "unknown error"));
     } finally {
