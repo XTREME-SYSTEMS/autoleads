@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Activity, BarChart3, Bot, Bug, Database, Eye, Flag, Gauge, LayoutDashboard,
-  MapPin, Monitor, Plus, Rocket, Search, Shield, ShieldCheck, Tag, TestTube,
-  Users, Wrench, Zap,
+  Activity, BarChart3, BookOpen, Bot, Bug, Database, Eye, Flag, Gauge, Layers,
+  LayoutDashboard, MapPin, Monitor, Plus, Rocket, Search, Shield, ShieldCheck,
+  Tag, TestTube, Users, Wrench, Zap,
 } from "lucide-react";
 
 // Left sidebar for the upgraded Admin Portal — all tools and pages organized
@@ -39,9 +39,17 @@ const SECTIONS = [
       { to: '/test-agent-portal', label: 'Test Agent Portal', icon: Zap },
       { to: '/system-qa', label: 'System QA', icon: Activity },
       { to: '/test-runner', label: 'Test Runner', icon: TestTube },
+      { to: '/system-test-suite', label: 'System Test Suite', icon: TestTube },
       { to: '/validation-gates', label: 'Validation Gates', icon: Shield },
       { to: '/self-reflection', label: 'Self-Reflection', icon: Activity },
       { to: '/async-load-test', label: 'Load Tests', icon: Gauge },
+    ],
+  },
+  {
+    title: 'Prompt Library & Capabilities',
+    items: [
+      { to: '/prompt-library', label: 'Prompt Library', icon: BookOpen },
+      { to: '/capability-matrix', label: 'Capability Matrix', icon: Layers },
     ],
   },
   {
