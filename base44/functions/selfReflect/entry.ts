@@ -18,10 +18,54 @@ import { forEachOrganization, resolveUserOrgs, scopedFilter } from '../../shared
 //
 // Designed to run via workflow after the daily pipeline, or manually from the UI.
 
+// Circular-safe JSON stringify — replaces circular references with '[Circular]'
+// instead of throwing. SDK function.invoke() can return Response-like objects
+// with circular refs (ClientRequest._redirectable) that break JSON.stringify.
+function safeStringify(obj: any): string {
+  const seen = new WeakSet();
+  return JSON.stringify(obj, (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) return '[Circular]';
+      seen.add(value);
+    }
+    return value;
+  });
+}
+
+// Extract only serializable fields from an SDK function.invoke() response.
+// The raw response may contain circular refs (ClientRequest, _redirectable).
+function sanitizeResponse(res: any): any {
+  if (res === null || res === undefined) return res;
+  if (typeof res !== 'object') return res;
+  // If it has a .data property (common SDK pattern), use that
+  if ('data' in res && res.data && typeof res.data === 'object' && !Array.isArray(res.data)) {
+    return sanitizeResponse(res.data);
+  }
+  try {
+    // Try a normal stringify first — works for plain objects
+    JSON.stringify(res);
+    return res;
+  } catch {
+    // Circular ref detected — extract only scalar/array fields
+    const safe: any = {};
+    for (const key of Object.keys(res)) {
+      const val = (res as any)[key];
+      if (val === null || val === undefined) { safe[key] = val; continue; }
+      if (typeof val !== 'object') { safe[key] = val; continue; }
+      if (Array.isArray(val)) {
+        safe[key] = val.map((v: any) => typeof v === 'object' && v !== null ? sanitizeResponse(v) : v);
+      } else {
+        safe[key] = sanitizeResponse(val);
+      }
+    }
+    return safe;
+  }
+}
+
 async function invokeFunction(client: any, name: string, payload: any = {}): Promise<any> {
   try {
     const res = await client.functions.invoke(name, payload);
-    return res;
+    return sanitizeResponse(res);
   } catch (err: any) {
     return { error: err?.message || String(err), _failed: true };
   }
@@ -111,7 +155,7 @@ EMAIL SCAN:
 - Bid responses found: ${emailResponsesFound}
 
 OPEN FLAGS: ${flagsBefore}
-ISSUES ENCOUNTERED: ${JSON.stringify(issues)}
+ISSUES ENCOUNTERED: ${safeStringify(issues)}
 
 Analyze this run and return JSON:
 - what_went_well: array of strings (things that worked correctly)
@@ -194,9 +238,9 @@ Analyze this run and return JSON:
         status: 'completed',
         completed_at: completedAt.toISOString(),
         duration_seconds: durationSeconds,
-        pipeline_results: JSON.stringify(pipelineStats),
-        pre_scores: JSON.stringify(preScores),
-        post_scores: JSON.stringify(postScores),
+        pipeline_results: safeStringify(pipelineStats),
+        pre_scores: safeStringify(preScores),
+        post_scores: safeStringify(postScores),
         score_delta: scoreDelta,
         flags_created: qaFlagsCreated,
         flags_fixed: flagsFixed,
@@ -204,8 +248,8 @@ Analyze this run and return JSON:
         emails_scanned: emailsScanned,
         email_responses_found: emailResponsesFound,
         email_qa_issues: qaFlagsCreated,
-        issues_identified: JSON.stringify(issues),
-        fixes_applied: JSON.stringify(fixes),
+        issues_identified: safeStringify(issues),
+        fixes_applied: safeStringify(fixes),
         llm_analysis: llmAnalysis,
         action_plan: actionPlan,
       }).catch(() => null);
