@@ -9,6 +9,7 @@ import ProgressTracker from "@/components/pipeline/ProgressTracker";
 import StepSection from "@/components/pipeline/StepSection";
 import StatCard from "@/components/pipeline/StatCard";
 import CityLeadsBrowser from "@/components/pipeline/CityLeadsBrowser";
+import PipelineKanban from "@/components/dashboard/PipelineKanban";
 
 function extractEmail(text) {
   if (!text) return "";
@@ -197,9 +198,20 @@ export default function PipelineFlow() {
     <div className="grid place-items-center py-8"><Loader2 className="animate-spin text-[#FFC107]" size={26} /></div>
   );
 
+  const reloadProjects = async () => {
+    try {
+      const list = await base44.entities.Project.list("-created_date", 200).catch(() => []);
+      setProjects(list || []);
+    } catch {}
+  };
+
   return (
     <div className="min-h-screen bg-[#F9F9F9] pb-24 dark:bg-[#0B0B0B]">
       <ProgressTracker currentStep={currentStep} />
+
+      <div className="px-5">
+        <PipelineKanban projects={projects} onMoved={reloadProjects} />
+      </div>
 
       {/* STEP 1: SCRAPE */}
       <StepSection number={1} title="Scrape Leads" subtitle="Choose a state, county, and trade — then scrape exactly what you want." ctaLabel="START SCRAPING" ctaIcon={Search} onCta={() => runAction("runAutoScrape", "Scrape", scrapeFilters)} busy={busy === "Scrape"}>
