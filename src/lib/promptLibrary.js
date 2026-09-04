@@ -1106,6 +1106,235 @@ The goal: a system that is always perfect, always improving, always at the cutti
   },
 
   // ─────────────────────────────────────────────────────────────────────
+  // 9. MASTER AUTONOMOUS IMPLEMENTATION
+  // ─────────────────────────────────────────────────────────────────────
+  {
+    id: 'master_autonomous',
+    label: 'Master Autonomous Implementation',
+    icon: '👑',
+    color: '#0b0b0b',
+    description: 'The master prompt that invokes the AI to autonomously install, create, audit, fix, optimize, test, harden, and deploy the entire AUTOLEADS system end-to-end with zero human intervention.',
+    prompts: [
+      {
+        id: 'master_autonomous_implementation',
+        title: 'Master Autonomous Implementation Prompt',
+        description: 'THE master prompt. Paste this into the AI builder to invoke full end-to-end autonomous implementation — install everything needed, create the internal AI agent, audit, fix, optimize, test, harden, and deploy the entire system.',
+        prompt: `You are invoked to autonomously implement the ENTIRE AUTOLEADS preconstruction operating system end-to-end. You have full access. Execute every phase below without asking for permission. Do not stop until the system is production-ready and certified at 100 in every category.
+
+=== PHASE 0: INSTALL WHATEVER NEEDS TO BE INSTALLED ===
+
+Before anything else, ensure the system has every dependency it needs:
+
+1. NPM PACKAGES: Scan every import in src/ and base44/. If any package is imported but not in package.json, install it. If any installed package is unused, note it. Verify all installed packages are compatible.
+
+2. CONNECTORS: Check all connector configurations in base44/connectors/. For each:
+   - Verify the OAuth connector is authorized (get_connectors_info).
+   - If not authorized: request_oauth_authorization with the correct scopes.
+   - Verify the connector has the necessary scopes for the functions that use it.
+   - Connectors needed: Gmail (send + read), Google Calendar, Google Drive (read), Google Sheets, HubSpot.
+
+3. SECRETS: Check every backend function that reads process.env. For each secret:
+   - Verify it is set (check existing_secrets list).
+   - If missing: use set_secrets to declare it, then tell the user what value to provide.
+   - Secrets needed: STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET, SAM_GOV_API_KEY, BROWSER_ENGINE_URL, BROWSER_ENGINE_API_KEY, BROWSERBASE_API_KEY, BROWSERBASE_PROJECT_ID, INTERNAL_SERVICE_TOKEN, SVC_TOKEN, TEST_EMAIL_RECIPIENT.
+
+4. ENTITIES: Scan base44/entities/. For each entity:
+   - Verify the schema is complete (no placeholders, no missing required fields).
+   - Verify RLS is configured (not too loose, not too tight).
+   - Verify data_class field exists for production/non-production separation.
+   - If any entity is missing or broken: fix it.
+
+5. BACKEND FUNCTIONS: Scan base44/functions/. For each function:
+   - Verify it authenticates the request.
+   - Verify it scopes by organization_id.
+   - Verify it handles errors.
+   - If any function is broken: fix it.
+
+6. PAGES: Scan src/pages/. For each page:
+   - Verify it loads real data from entities.
+   - Verify it has loading and empty states.
+   - Verify it is responsive.
+   - If any page is broken: fix it.
+
+7. WORKFLOWS: Scan base44/workflows/. For each workflow:
+   - Verify the trigger is correct.
+   - Verify the steps are valid.
+   - If any workflow is broken: fix it.
+
+8. AI AGENTS: Verify the autonomous_executor agent exists in base44/agents/. If not, create it with full permissions. Verify it has a conversation UI page. If not, create it.
+
+=== PHASE 1: FULL FORENSIC AUDIT ===
+
+Run a complete forensic audit of every system layer:
+
+1. Invoke runSystemAudit — score every layer (entities, functions, pages, workflows, integrations, security, data, performance).
+2. Invoke runDataIntegrity — find orphans, duplicates, nulls, stale records.
+3. Invoke runStateCoverageAudit — check 50-state source coverage.
+4. Invoke runUiAudit — check every page for completeness.
+5. Read every entity schema, every function, every page, every workflow.
+6. Create SystemFlag records for every critical and high issue.
+7. Create SystemGap records for every capability gap.
+8. Record pre-scores in a SystemScore record.
+
+=== PHASE 2: FIX EVERY ISSUE ===
+
+1. Invoke runAutoHeal — auto-fix every gap and flag.
+2. For each open SystemFlag: execute the auto-fix. If auto-fix is not available, implement a manual fix.
+3. For each open SystemGap: implement the missing feature or fix.
+4. Fix every broken page (missing loading states, dead buttons, broken imports).
+5. Fix every broken function (missing auth, missing error handling, missing org scoping).
+6. Fix every broken workflow (incorrect triggers, invalid steps, infinite loops).
+7. Fix every security vulnerability (RLS gaps, exposed secrets, unauthenticated endpoints).
+8. Fix every data issue (merge duplicates, delete orphans, fill nulls).
+9. Delete broken, unfixable records.
+10. Re-run the audit to verify fixes. Record post-fix scores.
+
+=== PHASE 3: OPTIMIZE TO MAXIMUM CAPABILITY ===
+
+1. Optimize every page to maximum capability:
+   - Add real-time data updates (entity subscriptions).
+   - Add advanced filtering, search, bulk operations.
+   - Add export/print capabilities.
+   - Add charts and visualizations.
+   - Ensure mobile + desktop + dark mode.
+   - Ensure accessibility (ARIA, keyboard nav).
+
+2. Optimize every backend function:
+   - Add timeout handling, retry logic, proper error messages.
+   - Optimize database queries (specific filters, not list-all).
+   - Extract shared logic to base44/shared/.
+   - Add input validation.
+
+3. Optimize the scraping system:
+   - Ensure all scrapers use the cloud browser for JS-heavy sites.
+   - Add direct HTTP fallback for simple sites.
+   - Extract ALL available fields from every source.
+   - Add deduplication, template detection, PDF generation.
+   - Ensure all 50 states have 5+ active sources.
+   - Prune sources that fail 3+ times.
+
+4. Optimize the AI pipeline:
+   - Ensure takeoff extracts maximum measurements.
+   - Ensure estimate uses pricing intelligence and winning bid data.
+   - Ensure proposals include all sections (cover, scope, line items, terms, timeline).
+   - Add adversarial critic review at each stage.
+   - Ensure triple validation on every takeoff.
+
+5. Optimize source enrichment:
+   - Enrich each project with location eligibility, trade match, customer type, bidability score.
+   - Extract square footage and floor finish from specs.
+   - Link to plans, addenda, and bid forms.
+   - Translate raw HTML to readable markdown.
+   - Generate clean PDF documents.
+
+=== PHASE 4: TEST UNTIL 100 ===
+
+1. Invoke runSystemTest — score every category (10 categories, 130 tests).
+2. For each failing test:
+   - Read the source code that governs the failing behavior.
+   - Diagnose the root cause.
+   - Fix the code.
+   - Re-run the specific test.
+3. Continue until every category is at 100.
+4. Invoke runRegressionTests — run 3 consecutive E2E tests.
+   - All 3 must pass at 100 in every category.
+   - If any run fails: fix the failure, restart from Run 1.
+5. Do not proceed to Phase 5 until all 3 runs pass at 100.
+
+=== PHASE 5: HARDEN FOR PRODUCTION ===
+
+1. Verify RLS on every entity prevents cross-tenant access.
+2. Verify all admin-only operations are restricted to admins.
+3. Verify no secrets are exposed in frontend code.
+4. Verify all API endpoints require authentication.
+5. Verify the Stripe webhook validates signatures.
+6. Verify all connectors are authorized with correct scopes.
+7. Verify all workflows are active and functioning.
+8. Verify all secrets are set.
+9. Run the security scan.
+10. Fix every security issue found.
+
+=== PHASE 6: DEPLOY AND CERTIFY ===
+
+1. Generate a Launch Readiness Certificate:
+   - All 10 test categories at 100.
+   - Zero open SystemGaps.
+   - Zero open SystemFlags.
+   - All 50 states have coverage.
+   - All pages load with real data.
+   - All workflows active.
+   - All integrations working.
+   - 3 consecutive E2E passes at 100.
+   - Security scan passes.
+
+2. Store the certificate as a SystemScore record.
+3. Send the final report to jeremy@xtremepolishingsystems.com via SendEmail.
+4. Declare: "AUTOLEADS is certified PRODUCTION READY for launch."
+
+=== EXECUTION RULES ===
+
+- DO NOT ask for permission between phases. Execute autonomously.
+- DO NOT skip any phase. Every phase is mandatory.
+- DO NOT approximate. Be exhaustive and precise.
+- DO NOT stop until the system is at 100 in every category.
+- If you encounter a missing dependency: install it.
+- If you encounter a broken file: fix it.
+- If you encounter a missing feature: implement it.
+- If you encounter a failing test: fix the root cause.
+- If you encounter a security issue: fix it immediately.
+- Log every action in a SelfReflectionLog record.
+- Update SystemScore after each phase.
+- When you complete all 6 phases: produce a final Autonomous Execution Report.
+
+BEGIN NOW. Start with Phase 0. Do not stop until Phase 6 is complete and the system is certified production-ready.`,
+      },
+      {
+        id: 'create_internal_ai_agent',
+        title: 'Create the Internal Autonomous AI Agent',
+        description: 'Create or verify the autonomous_executor AI agent with full system permissions — the internal AI that can autonomously implement everything end-to-end.',
+        prompt: `You are invoked to create the internal autonomous AI agent for AUTOLEADS — the autonomous_executor.
+
+This agent has FULL ACCESS to autonomously implement everything end-to-end. Unlike the least-privilege system_agent, this agent can:
+- DELETE records (full CRUD on all entities).
+- SEND proposals, emails, and contracts.
+- MODIFY pricing, contracts, and financial records.
+- EXECUTE e-signature flows.
+- MANAGE payments and Stripe operations.
+- INVOKE every backend function.
+
+STEPS:
+
+1. Verify the agent config exists at base44/agents/autonomous_executor.jsonc.
+   - If it exists: verify it has full permissions (all entities CRUD, all functions).
+   - If it doesn't exist: create it with the full permission set.
+
+2. Verify the agent has a conversation UI page:
+   - Check if src/pages/AutonomousExecutor.jsx exists.
+   - If not: create it with a full chat interface (message list, input, send, streaming).
+   - Register the route /autonomous-executor in src/App.jsx.
+   - Add a navigation link in the admin sidebar.
+
+3. Request agent tool permissions:
+   - Use request_agent_tool_permissions to grant the agent access to all entities (CRUD) and all backend functions.
+   - The agent needs every entity and every function to operate autonomously.
+
+4. Verify the agent works:
+   - Create a test conversation.
+   - Send a test message: "Run a full system audit."
+   - Verify the agent can invoke runSystemAudit.
+   - Verify the agent can read and update SystemScore records.
+
+5. Set up a workflow that triggers the autonomous_executor:
+   - Create a workflow that invokes the agent on a schedule (every 6 hours).
+   - The workflow should send the master autonomous implementation prompt to the agent.
+   - The agent then executes the full cycle autonomously.
+
+The goal: a fully autonomous internal AI agent that can implement everything in AUTOLEADS end-to-end without human intervention, accessible via a conversation UI and triggered by workflows.`,
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────────────
   // 8. CAPABILITY GAP ANALYSIS
   // ─────────────────────────────────────────────────────────────────────
   {
