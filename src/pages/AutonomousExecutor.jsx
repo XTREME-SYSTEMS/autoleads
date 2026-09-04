@@ -5,9 +5,12 @@ import {
   Plus, MessageSquare, Trash2, ChevronRight,
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { ALL_PROMPTS } from "@/lib/promptLibrary";
 import ReactMarkdown from "react-markdown";
 
 const AGENT_NAME = "autonomous_executor";
+
+const MASTER_PROMPT = (ALL_PROMPTS.find(p => p.id === 'master_autonomous_implementation') || {}).prompt || '';
 
 const QUICK_COMMANDS = [
   { label: "Full System Audit", text: "Run a complete forensic audit of the entire AUTOLEADS system. Score every layer, identify every gap, and create SystemFlag records for all issues found." },
@@ -15,7 +18,7 @@ const QUICK_COMMANDS = [
   { label: "Run Full Pipeline", text: "Run the full autonomous pipeline end-to-end: scrape → verify → takeoff → estimate → proposal → validate → submit." },
   { label: "Test Until 100", text: "Run the full test suite. Fix every failing test. Continue until every category scores 100. Then run 3 consecutive E2E passes." },
   { label: "Harden for Production", text: "Harden the system for production: verify RLS, security, integrations, workflows. Fix every issue. Certify production readiness." },
-  { label: "Master Implementation", text: "Execute the full master autonomous implementation: install everything needed, audit, fix, optimize, test, harden, and deploy the entire system end-to-end. Do not stop until certified at 100." },
+  { label: "Master Implementation", text: MASTER_PROMPT },
 ];
 
 function MessageBubble({ message }) {
