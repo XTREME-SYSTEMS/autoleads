@@ -118,6 +118,14 @@
         }
       }
     },
+    "scope_of_work": {
+      "type": "string",
+      "description": "Professional scope of work text describing what will be done, referencing project specs and takeoff quantities"
+    },
+    "cover_letter": {
+      "type": "string",
+      "description": "Professional cover letter text introducing the company and the proposal"
+    },
     "data_class": {
       "type": "string",
       "enum": [

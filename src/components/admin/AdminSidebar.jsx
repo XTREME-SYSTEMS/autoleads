@@ -51,6 +51,7 @@ const SECTIONS = [
       { to: '/prompt-library', label: 'Prompt Library', icon: BookOpen },
       { to: '/capability-matrix', label: 'Capability Matrix', icon: Layers },
       { to: '/autonomous-executor', label: 'Autonomous Executor', icon: Rocket },
+      { to: '/system-editor', label: 'System Editor', icon: Wrench },
     ],
   },
   {

@@ -3,11 +3,13 @@ import {Building2,CheckCircle2,ExternalLink,FileText,MapPin,ShieldCheck,Target,U
 import {useNavigate,useParams} from "react-router-dom";
 import {base44} from "@/api/base44Client";
 import {BackLink,CommercialPage,DataRow,IndustrialTitle,PrimaryAction,SecondaryAction,StatusPill,Surface,fmtDate,money} from "@/components/CommercialMobileUI";
+import PlansAndSpecsSection from "@/components/projects/PlansAndSpecsSection";
 
 export default function ProjectDetail(){
   const {projectId,leadId}=useParams();const id=projectId||leadId;const nav=useNavigate();const [project,setProject]=useState(null);const [takeoffs,setTakeoffs]=useState(/** @type {any[]} */ ([]));const [estimates,setEstimates]=useState(/** @type {any[]} */ ([]));const [proposals,setProposals]=useState(/** @type {any[]} */ ([]));const [loading,setLoading]=useState(true);const [busy,setBusy]=useState(false);
   useEffect(()=>{let live=true;(async()=>{if(!id)return;const [p,t,e,pr]=await Promise.all([base44.entities.Project.get(id).catch(()=>null),base44.entities.Takeoff.filter({project_id:id}).catch(()=>[]),base44.entities.Estimate.filter({project_id:id}).catch(()=>[]),base44.entities.Proposal.filter({project_id:id}).catch(()=>[])]);if(live){setProject(p);setTakeoffs(t||[]);setEstimates(e||[]);setProposals(pr||[]);setLoading(false)}})();return()=>{live=false}},[id]);
   const pursue=async()=>{if(!project)return;setBusy(true);try{await base44.entities.PipelineEvent.create({organization_id:project.organization_id,project_id:project.id,step:"lead",status:"completed",event_type:"pursue",message:"Operator confirmed pursuit from Opportunity Details.",occurred_at:new Date().toISOString()});if(project.stage==="qualification"){await base44.entities.Project.update(project.id,{stage:"takeoff"});setProject({...project,stage:"takeoff"})}nav(`/projects/${project.id}/takeoff`)}finally{setBusy(false)}};
+  const load=async()=>{if(!id)return;const [p,t,e,pr]=await Promise.all([base44.entities.Project.get(id).catch(()=>null),base44.entities.Takeoff.filter({project_id:id}).catch(()=>[]),base44.entities.Estimate.filter({project_id:id}).catch(()=>[]),base44.entities.Proposal.filter({project_id:id}).catch(()=>[])]);setProject(p);setTakeoffs(t||[]);setEstimates(e||[]);setProposals(pr||[]);setLoading(false)};
   if(loading)return <CommercialPage><Surface className="p-8 text-center">Loading verified opportunity…</Surface></CommercialPage>;
   if(!project)return <CommercialPage><BackLink to="/leads" label="Back to Leads"/><IndustrialTitle compact>Opportunity Details</IndustrialTitle><Surface className="p-8 text-center">Opportunity not found.</Surface></CommercialPage>;
   const approvedTakeoffs=takeoffs.filter(t=>t.approval_state==="approved");const approvedEstimate=estimates.find(e=>e.status==="approved");const proposal=proposals[0];
@@ -21,8 +23,11 @@ export default function ProjectDetail(){
     </Surface>
     <h3 className="mb-3 mt-6 font-brand text-[20px] font-bold uppercase">Bid Intelligence</h3><Surface className="px-5"><DataRow label="Authority" value={project.authority}/><DataRow label="Client / owner" value={project.client_name}/><DataRow label="Stage" value={project.stage}/><DataRow label="Approved takeoffs" value={String(approvedTakeoffs.length)}/><DataRow label="Approved estimate" value={approvedEstimate?money(approvedEstimate.grand_total):"Not approved"}/><DataRow label="Proposal" value={proposal?proposal.status:"Not built"}/></Surface>
     {project.description&&<Surface className="mt-4 p-5"><p className="font-brand text-sm font-bold uppercase text-[#E9A900]">Project Summary</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-black/70">{project.description}</p></Surface>}
-    {project.specs&&<Surface className="mt-4 p-5"><p className="font-brand text-sm font-bold uppercase text-[#E9A900]">Verified Scope / Specs</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-black/70">{project.specs}</p></Surface>}
     {project.contract_info&&<Surface className="mt-4 p-5"><p className="font-brand text-sm font-bold uppercase text-[#E9A900]">Procurement / Contact Information</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-black/70">{project.contract_info}</p></Surface>}
+
+    <h3 className="mb-3 mt-6 font-brand text-[20px] font-bold uppercase">Plans, Specs & Drawings</h3>
+    <PlansAndSpecsSection project={project} onRefresh={load} />
+
     <div className="mt-5"><PrimaryAction onClick={pursue} disabled={busy}>{busy?"Working…":"🔥 Pursue This Job"}</PrimaryAction><div className="mt-2 grid grid-cols-2 gap-2"><SecondaryAction onClick={()=>nav(`/projects/${project.id}/documents`)}><FileText size={17}/>See Documents</SecondaryAction><SecondaryAction onClick={()=>nav(`/projects/${project.id}/source`)}><ExternalLink size={17}/>Open Source</SecondaryAction></div></div>
   </CommercialPage>;
 }

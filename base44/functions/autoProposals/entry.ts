@@ -58,14 +58,18 @@ async function processOrg(client: any, orgId: string, limit: number, singleProje
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         llm = await client.integrations.Core.InvokeLLM({
-          prompt: `You are drafting a construction proposal for a ${company?.trade || 'general contractor'} contractor.
+          prompt: `You are drafting a professional construction proposal for a ${company?.trade || 'general contractor'} contractor. This proposal will be sent to a client — it must be detailed, specific, and professional.
+
 Company: ${company?.name || ''} — Location: ${company?.city || ''}, ${company?.state || ''}
 Project: ${proj.title}
 Jurisdiction: ${proj.jurisdiction || 'N/A'}
 Authority/Client: ${proj.authority || proj.client_name || 'N/A'}
 Trade: ${proj.trade || company?.trade || 'N/A'}
 Verified project value: ${proj.value || 'unknown'}
+Square footage: ${proj.square_footage || 'not published — derive from specs/takeoff'}
+Floor finish: ${proj.floor_finish || 'not specified — identify from specs'}
 Project specs: ${proj.specs || 'N/A'}
+Project description: ${proj.description || 'N/A'}
 Takeoff quantities (measured from the source documents): ${takeoffSummary || 'N/A'}
 
 THIS COMPANY ONLY PERFORMS THESE TRADE SCOPES (configured in the user's settings). Every line item's description MUST match one of these scopes — do NOT invent scopes outside this list:
@@ -75,11 +79,34 @@ Allowed scope categories: ${allowedScopes.length > 0 ? allowedScopes.join(', ') 
 Pricing profile: labor_hourly_rate=${pricing?.labor_hourly_rate || 'N/A'}, mandatory_margin_pct=${pricing?.mandatory_margin_pct || 'N/A'}, pricing_tier=${pricing?.pricing_tier || 'mid'}.
 Scope pricing samples: ${JSON.stringify((pricing?.scope_pricing || []).slice(0, 6))}
 
-Generate a realistic proposal as JSON: title, client_name, total_value (number, grounded in the verified project value and takeoff quantities — do not round to arbitrary numbers), and items (3-8 line items, each: description (MUST be one of the allowed scopes above), quantity, unit, unit_price, source="approved_estimate"). Use the takeoff quantities to drive each line item's quantity. Apply the mandatory margin into the unit prices. Never include a line item whose scope is not in the allowed list.`,
+CRITICAL — DETAILED LINE ITEMS:
+Each line item description MUST be specific and include the scope name, the square footage or quantity, and the system type. For example:
+- "Epoxy floor system — 2,500 SF primer + base + broadcast flakes + 2 coats clear topcoat" (NOT just "general construction")
+- "Surface preparation — 2,500 SF diamond grind + repair cracks/joints"
+- "Polished concrete — 3,000 SF 3-step mechanical polish to 3000 grit"
+- "Cove base installation — 150 LF 4" integral cove base"
+- "Demolition — existing flooring removal 2,500 SF"
+- "Mobilization, travel, and equipment — 1 project"
+
+Generate a professional proposal as JSON:
+- title: professional proposal title
+- client_name: the client/authority name
+- total_value: number, grounded in the verified project value and takeoff quantities — do not round to arbitrary numbers
+- items: 5-10 detailed line items, each with:
+  - description: SPECIFIC description including scope name, square footage or quantity, and system details (e.g. "Epoxy floor system — 2,500 SF primer + base + broadcast + 2 coats clear")
+  - quantity: number (use takeoff quantities or derived from square footage)
+  - unit: SF, LF, EA, HR, LOT, etc.
+  - unit_price: number (use scope pricing samples + mandatory margin)
+  - source: "approved_estimate"
+- scope_of_work: 2-3 paragraph professional scope of work describing what will be done, referencing the project specs and takeoff quantities
+- cover_letter: 2-paragraph professional cover letter introducing the company and the proposal
+
+Apply the mandatory margin into the unit prices. Never include a line item whose scope is not in the allowed list. Use the takeoff quantities to drive each line item's quantity. If square_footage is published, use it for flooring scope quantities.`,
           response_json_schema: {
             type: 'object',
             properties: {
               title: { type: 'string' }, client_name: { type: 'string' }, total_value: { type: 'number' },
+              scope_of_work: { type: 'string' }, cover_letter: { type: 'string' },
               items: { type: 'array', items: { type: 'object', properties: {
                 description: { type: 'string' }, quantity: { type: 'number' }, unit: { type: 'string' },
                 unit_price: { type: 'number' }, source: { type: 'string' }
@@ -119,6 +146,8 @@ Generate a realistic proposal as JSON: title, client_name, total_value (number, 
         total_value: llm?.total_value || proj.value || 0,
         logo_url: logoUrl,
         items,
+        scope_of_work: llm?.scope_of_work || '',
+        cover_letter: llm?.cover_letter || '',
       });
       // CRM auto-capture: save contractor/client info to database (org-scoped)
       const clientName = llm?.client_name || proj.authority || proj.client_name || '';

@@ -1,0 +1,979 @@
+{
+  "description": "AUTOLEADS System Editor \u2014 a full-access AI agent that can edit and manage the entire system end-to-end. It has complete CRUD on all entities, can invoke every backend function, manage proposals, projects, takeoffs, estimates, sources, pricing, contracts, payments, and all system configuration. Unlike the autonomous_executor (which runs autonomous cycles), this agent is interactive \u2014 you command it to make specific edits, fix specific issues, or build specific features, and it executes immediately. Use this agent when you want hands-on control of system editing through natural language.",
+  "instructions": "You are the AUTOLEADS System Editor \u2014 a full-access interactive AI agent with complete system control. You act on behalf of the logged-in admin user and can edit ANYTHING in the system end-to-end.\n\n=== FULL ACCESS POLICY ===\n\nYou have COMPLETE access:\n- FULL CRUD (create, read, update, DELETE) on ALL entities.\n- Can invoke EVERY backend function in the system.\n- Can create, modify, and delete proposals, projects, takeoffs, estimates, sources, pricing profiles, contracts, invoices, and all system configuration.\n- Can send proposals, emails, and contracts.\n- Can manage payments and Stripe operations.\n- Can manage promo codes, API keys, and access levels.\n\n=== WHAT YOU DO ===\n\nThe user commands you to make specific changes. You execute them precisely:\n\n1. EDIT PROPOSALS \u2014 When asked to improve a proposal, you can:\n   - Read the proposal and its linked project.\n   - Regenerate line items with detailed descriptions including square footage, quantities, and unit prices.\n   - Add scope of work, cover letter, and terms conditions.\n   - Update the proposal with richer content.\n   - Invoke autoTakeoff to re-extract measurements from the project source.\n   - Invoke autoProposals to regenerate the proposal.\n\n2. EDIT PROJECTS \u2014 When asked to enrich a project, you can:\n   - Read the project and its source URL.\n   - Invoke verifyProject to re-fetch the source and extract plans, specs, drawings, documents.\n   - Update the project with extracted square_footage, floor_finish, specs, contract_info.\n   - Extract document links (plans_url, addenda_url, documents array).\n   - Invoke translateSourceDocument to generate a readable document from the raw source.\n   - Invoke generateSourcePdfs to generate clean PDF documents.\n\n3. MANAGE PIPELINE \u2014 When asked to run pipeline operations:\n   - Invoke runFullPipeline for end-to-end processing.\n   - Invoke autoTakeoff for measurement extraction.\n   - Invoke autoProposals for proposal generation.\n   - Invoke validationGate for validation.\n   - Invoke submitProposal for bid submission.\n\n4. FIX ISSUES \u2014 When asked to fix problems:\n   - Invoke runAutoHeal to auto-fix gaps and flags.\n   - Invoke autoCleanSystem to clean stale data.\n   - Invoke runSystemAudit to score the system.\n   - Invoke runDataIntegrity to find data issues.\n   - Fix specific projects, proposals, or records directly.\n\n5. MANAGE SOURCES \u2014 When asked to manage scraping:\n   - Invoke runAutoScrape to scrape all sources.\n   - Invoke discoverSources to find new sources.\n   - Invoke seedDemandSources to validate sources.\n   - Invoke scrapePermits, scrapeSocialLeads, scrapeFdots, etc. for specific scrapers.\n\n6. MANAGE INTEGRATIONS \u2014 When asked to manage connectors:\n   - Invoke syncCalendar, syncProjectToDrive, syncCostsToSheets, hubspotSync.\n   - Invoke gmailSync, gmailIngestBids, scanEmailResponses.\n   - Invoke sendEmail, sendEmailAlerts, sendContractorOutreach.\n\n=== EXECUTION RULES ===\n\n- You are INTERACTIVE. The user gives you a specific command, you execute it, and report the result.\n- You have DELETE access. Use it to remove broken, duplicate, or stale records. But always confirm before deleting.\n- When the user asks you to improve a proposal: read it, read its project, regenerate with richer content, and update it.\n- When the user asks you to enrich a project: invoke verifyProject, extract documents, update with square_footage and floor_finish.\n- When the user asks you to fix the system: invoke the appropriate audit/heal/test functions.\n- Log every significant action in a PipelineEvent or SelfReflectionLog record.\n- Create SystemFlag records for issues that need human attention.\n- Always report what you did, what changed, and what still needs attention.\n\n=== SAFETY ===\n\n- Never delete User records.\n- Never expose secrets in responses.\n- Never send spam or unsolicited emails.\n- Never modify Stripe products or prices without explicit instruction.\n- Always confirm before deleting multiple records.\n- Always validate before sending (proposals, emails, contracts).",
+  "tool_configs": [
+    {
+      "entity_name": "Project",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Contractor",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Proposal",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Estimate",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Takeoff",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "TakeoffBenchmark",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Contact",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "CompanyProfile",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Material",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "PricingProfile",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ScrapeSource",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Opportunity",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "BidInvitation",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "CanonicalOpportunity",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "OrganizationOpportunityMatch",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "OpportunitySourceRecord",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "PipelineEvent",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Notification",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ActionItem",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "AgentTask",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Message",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "EmailTemplate",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ContractTemplate",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ProposalPackage",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "EsignDocument",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "SignedContract",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ChangeOrder",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Invoice",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Payment",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "PaymentPreference",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "PromoCode",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ApiKey",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "BrandAsset",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ProjectImage",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Benchmark",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Recommendation",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Job",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ScopeSystem",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "AutomationConfig",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ContractorApp",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Organization",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "OrganizationMembership",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "User",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "AccessLevel",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "SystemGap",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "SystemScore",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "SystemFlag",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "StateCoverage",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "SelfReflectionLog",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ValidationLog",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "CostMetric",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "CostRecommendation",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "LeadValidationRecord",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ReviewBatch",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "SourceVerificationQueue",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "SourceQualityScore",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "LoadTestRun",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "LoadTestBatch",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "StripeEvent",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ClaimLedger",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "SuperadminAudit",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
+    },
+    {
+      "function_name": "runSystemAudit",
+      "description": "Run full system audit \u2014 scores every layer"
+    },
+    {
+      "function_name": "runDataIntegrity",
+      "description": "Validate data integrity"
+    },
+    {
+      "function_name": "runAutoHeal",
+      "description": "Auto-heal the system \u2014 fix gaps and flags"
+    },
+    {
+      "function_name": "runAutoScrape",
+      "description": "Trigger lead discovery scrape cycle"
+    },
+    {
+      "function_name": "runFullPipeline",
+      "description": "Run the full autonomous pipeline end-to-end"
+    },
+    {
+      "function_name": "runSystemTest",
+      "description": "Run the full test suite and score every category"
+    },
+    {
+      "function_name": "runRegressionTests",
+      "description": "Run regression / E2E tests"
+    },
+    {
+      "function_name": "runUiAudit",
+      "description": "Audit every page for completeness"
+    },
+    {
+      "function_name": "runStateCoverageAudit",
+      "description": "Audit source coverage across all 50 states"
+    },
+    {
+      "function_name": "runBenchmarkResearch",
+      "description": "Research competitor platforms"
+    },
+    {
+      "function_name": "runRecursiveAudit",
+      "description": "Run a recursive audit-implement-validate loop"
+    },
+    {
+      "function_name": "runCriticReview",
+      "description": "Run adversarial critic review"
+    },
+    {
+      "function_name": "selfReflect",
+      "description": "Run a self-reflection cycle"
+    },
+    {
+      "function_name": "autoCleanSystem",
+      "description": "Clean up stale and orphaned system data"
+    },
+    {
+      "function_name": "autoFixFlag",
+      "description": "Auto-fix a specific SystemFlag"
+    },
+    {
+      "function_name": "autoTakeoff",
+      "description": "Generate AI takeoff from project specs"
+    },
+    {
+      "function_name": "autoProposals",
+      "description": "Generate proposals from qualified leads"
+    },
+    {
+      "function_name": "autoFollowUp",
+      "description": "Send automated follow-up emails"
+    },
+    {
+      "function_name": "verifyProject",
+      "description": "Fetch a project source URL and extract verified details, plans, specs, documents"
+    },
+    {
+      "function_name": "batchGatherProjectDetails",
+      "description": "Batch gather details for multiple projects"
+    },
+    {
+      "function_name": "validateTakeoff",
+      "description": "Validate a takeoff against project specs"
+    },
+    {
+      "function_name": "tripleValidateTakeoff",
+      "description": "Run triple validation on a takeoff"
+    },
+    {
+      "function_name": "validateBidPackage",
+      "description": "Validate a bid package before submission"
+    },
+    {
+      "function_name": "validationGate",
+      "description": "Run a validation gate check"
+    },
+    {
+      "function_name": "enforceTakeoffEvidence",
+      "description": "Enforce takeoff evidence requirements"
+    },
+    {
+      "function_name": "submitProposal",
+      "description": "Submit a proposal to the client"
+    },
+    {
+      "function_name": "sendEmail",
+      "description": "Send an email via Gmail"
+    },
+    {
+      "function_name": "sendEmailAlerts",
+      "description": "Send email alert notifications"
+    },
+    {
+      "function_name": "sendContractorOutreach",
+      "description": "Send contractor outreach emails"
+    },
+    {
+      "function_name": "sendFreeEvaluationOutreach",
+      "description": "Send free evaluation outreach emails"
+    },
+    {
+      "function_name": "scanEmailResponses",
+      "description": "Scan Gmail for email replies"
+    },
+    {
+      "function_name": "gmailSync",
+      "description": "Sync Gmail into Message records"
+    },
+    {
+      "function_name": "gmailIngestBids",
+      "description": "Ingest bid invitations from Gmail"
+    },
+    {
+      "function_name": "aiEmailResponse",
+      "description": "Generate an AI email response"
+    },
+    {
+      "function_name": "syncCalendar",
+      "description": "Sync Google Calendar events"
+    },
+    {
+      "function_name": "syncProjectToCalendar",
+      "description": "Sync a project to Google Calendar"
+    },
+    {
+      "function_name": "syncProjectToDrive",
+      "description": "Sync project documents to Google Drive"
+    },
+    {
+      "function_name": "syncCostsToSheets",
+      "description": "Sync cost data to Google Sheets"
+    },
+    {
+      "function_name": "hubspotSync",
+      "description": "Sync data to HubSpot CRM"
+    },
+    {
+      "function_name": "driveBrowse",
+      "description": "Browse files in Google Drive"
+    },
+    {
+      "function_name": "driveRead",
+      "description": "Read a file from Google Drive"
+    },
+    {
+      "function_name": "driveBundle",
+      "description": "Bundle files from Google Drive"
+    },
+    {
+      "function_name": "scanDriveBids",
+      "description": "Scan Google Drive for bid documents"
+    },
+    {
+      "function_name": "discoverSources",
+      "description": "Discover new lead sources"
+    },
+    {
+      "function_name": "discoverNorthAmericaSources",
+      "description": "Discover lead sources across North America"
+    },
+    {
+      "function_name": "seedDemandSources",
+      "description": "Seed and validate demand sources"
+    },
+    {
+      "function_name": "initSourceVerificationQueue",
+      "description": "Initialize the source verification queue"
+    },
+    {
+      "function_name": "scoreSourceQuality",
+      "description": "Score source quality metrics"
+    },
+    {
+      "function_name": "scrapePermits",
+      "description": "Scrape permit data"
+    },
+    {
+      "function_name": "scrapeSocialLeads",
+      "description": "Scrape social/residential leads"
+    },
+    {
+      "function_name": "scrapeFdots",
+      "description": "Scrape FDOT opportunities"
+    },
+    {
+      "function_name": "scrapeFederalAPIs",
+      "description": "Scrape federal APIs (SAM.gov, USAspending, Grants.gov)"
+    },
+    {
+      "function_name": "scrapeAgendas",
+      "description": "Scrape government agendas"
+    },
+    {
+      "function_name": "scrapeNewsFeeds",
+      "description": "Scrape construction news feeds"
+    },
+    {
+      "function_name": "scrapeContractors",
+      "description": "Scrape contractor directories"
+    },
+    {
+      "function_name": "browserScrape",
+      "description": "Scrape a URL using the cloud browser engine"
+    },
+    {
+      "function_name": "batchCreateBidPackages",
+      "description": "Batch create bid packages"
+    },
+    {
+      "function_name": "translateSourceDocument",
+      "description": "Translate raw source HTML to readable markdown"
+    },
+    {
+      "function_name": "generateSourcePdfs",
+      "description": "Generate clean PDF documents from sources"
+    },
+    {
+      "function_name": "compileProjectDocument",
+      "description": "Compile a professional project document"
+    },
+    {
+      "function_name": "enrichCompanyProfile",
+      "description": "Enrich a company profile with AI"
+    },
+    {
+      "function_name": "classifyCustomerType",
+      "description": "Classify projects by customer archetype"
+    },
+    {
+      "function_name": "canonicalizeProjects",
+      "description": "Canonicalize duplicate projects"
+    },
+    {
+      "function_name": "canonicalCertification",
+      "description": "Certify canonical opportunity records"
+    },
+    {
+      "function_name": "recomputeHotLeadTruth",
+      "description": "Recompute hot lead truth scores"
+    },
+    {
+      "function_name": "recomputeMatchEligibility",
+      "description": "Recompute match eligibility"
+    },
+    {
+      "function_name": "runLeadValidation",
+      "description": "Run lead validation"
+    },
+    {
+      "function_name": "createReviewBatches",
+      "description": "Create review batches for lead validation"
+    },
+    {
+      "function_name": "runTakeoffBenchmark",
+      "description": "Run takeoff benchmark tests"
+    },
+    {
+      "function_name": "trackBidOutcomes",
+      "description": "Track bid outcomes (won/lost)"
+    },
+    {
+      "function_name": "recordBidOutcome",
+      "description": "Record a bid outcome"
+    },
+    {
+      "function_name": "costIntelligence",
+      "description": "Run cost intelligence analysis"
+    },
+    {
+      "function_name": "createCheckoutSession",
+      "description": "Create a Stripe checkout session"
+    },
+    {
+      "function_name": "createPaymentIntent",
+      "description": "Create a Stripe payment intent"
+    },
+    {
+      "function_name": "createPortalSession",
+      "description": "Create a Stripe customer portal session"
+    },
+    {
+      "function_name": "createInvoiceForProject",
+      "description": "Create an invoice for a project"
+    },
+    {
+      "function_name": "createChangeOrder",
+      "description": "Create a change order"
+    },
+    {
+      "function_name": "generateContract",
+      "description": "Generate a contract document"
+    },
+    {
+      "function_name": "generateSafetyBooklet",
+      "description": "Generate a safety booklet"
+    },
+    {
+      "function_name": "esignFlow",
+      "description": "Execute an e-signature flow"
+    },
+    {
+      "function_name": "projectContract",
+      "description": "Manage project contracts"
+    },
+    {
+      "function_name": "scheduleProject",
+      "description": "Schedule a project"
+    },
+    {
+      "function_name": "scheduleJob",
+      "description": "Schedule a job"
+    },
+    {
+      "function_name": "morningDigest",
+      "description": "Generate the morning digest"
+    },
+    {
+      "function_name": "pushNewLeadAlerts",
+      "description": "Push new lead alert notifications"
+    },
+    {
+      "function_name": "qaMonitor",
+      "description": "Run QA monitoring"
+    },
+    {
+      "function_name": "managePromoCodes",
+      "description": "Manage promo codes"
+    },
+    {
+      "function_name": "createApiKey",
+      "description": "Create an API key"
+    },
+    {
+      "function_name": "setupOrganization",
+      "description": "Set up an organization"
+    },
+    {
+      "function_name": "runAsyncLoadTest",
+      "description": "Run an async load test"
+    },
+    {
+      "function_name": "processLoadTestBatch",
+      "description": "Process a load test batch"
+    },
+    {
+      "function_name": "loadTest",
+      "description": "Run a load test"
+    },
+    {
+      "function_name": "tenantIsolationTest",
+      "description": "Run a tenant isolation test"
+    },
+    {
+      "function_name": "stripeReplayTest",
+      "description": "Run a Stripe replay test"
+    },
+    {
+      "function_name": "rollbackTest",
+      "description": "Run a rollback test"
+    },
+    {
+      "function_name": "runUserTest",
+      "description": "Run a user test"
+    },
+    {
+      "function_name": "contractorAppShare",
+      "description": "Load a published contractor app by slug"
+    },
+    {
+      "function_name": "getStripeConfig",
+      "description": "Get Stripe configuration"
+    }
+  ],
+  "context_files": [],
+  "app_user_connector_configs": [
+    {
+      "connector_id": "69db200274332486fd28dd7e",
+      "enabled": true
+    },
+    {
+      "connector_id": "69db1e5e75a5f8c15c80cf34",
+      "enabled": true
+    },
+    {
+      "connector_id": "69ddcb305a599e0b4a1b3cff",
+      "enabled": true
+    },
+    {
+      "connector_id": "69db1fad3c50db37ad0ce8dd",
+      "enabled": true
+    },
+    {
+      "connector_id": "69db228b2439d854c8587167",
+      "enabled": true
+    }
+  ],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "whatsapp_greeting": null,
+  "telegram_greeting": null,
+  "line_greeting": null,
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "include_other_conversation_context": false,
+    "instructions": null
+  },
+  "voice_config": {
+    "voice_id": null
+  },
+  "emails_settings": null,
+  "allow_anonymous_access": false,
+  "name": "system_editor"
+}
