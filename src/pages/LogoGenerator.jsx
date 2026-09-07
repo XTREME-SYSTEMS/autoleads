@@ -22,7 +22,7 @@ export default function LogoGenerator() {
     } catch { setAssets([]); }
     finally { setLoading(false); }
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (orgId) load(); }, [orgId]);
 
   const generate = async () => {
     if (!prompt.trim() || generating) return;

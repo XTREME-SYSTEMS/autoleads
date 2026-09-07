@@ -73,7 +73,7 @@ export default function ServiceAreaSettings() {
       } catch { /* ignore */ }
       finally { setLoading(false); }
     })();
-  }, []);
+  }, [orgId]);
 
   const parsed = parseJurisdiction(jurisdiction);
   const stateLabels = parsed.states.map(stateName);

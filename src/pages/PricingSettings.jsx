@@ -52,7 +52,7 @@ export default function PricingSettings() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [orgId]);
 
   const set = (k) => (e) => setProfile((p) => ({ ...p, [k]: parseFloat(e.target.value) || 0 }));
   const setStr = (k) => (e) => setProfile((p) => ({ ...p, [k]: e.target.value }));

@@ -26,10 +26,12 @@ export default function OrganizationSettings() {
     e.preventDefault();
     setSaving(true);
     try {
+      // Strip built-in fields — sending id/created_date in an update payload can cause silent failures
+      const { id, created_date, updated_date, created_by_id, ...cleanData } = profile;
       if (profile.id) {
-        await base44.entities.CompanyProfile.update(profile.id, profile);
+        await base44.entities.CompanyProfile.update(profile.id, cleanData);
       } else {
-        const created = await base44.entities.CompanyProfile.create({ ...profile, organization_id: orgId });
+        const created = await base44.entities.CompanyProfile.create({ ...cleanData, organization_id: orgId });
         setProfile(created);
       }
       setSaved(true);
