@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useOrgId } from "@/hooks/useOrgContext";
 import { Page, PrimaryButton, SecondaryButton, Card, EmptyState, Field, inputClass } from "@/components/autoleads/UiPrimitives";
-import { FileText, Loader2, Trash2, Upload, Star, Plus, Eye } from "lucide-react";
+import { FileText, Loader2, Trash2, Upload, Star, Plus, Eye, Sparkles } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import AIProposalGenerator from "@/components/proposals/AIProposalGenerator";
 
 const STARTER = `<h1>[Company Name]</h1>
 <h2>Project Proposal</h2>
@@ -101,6 +102,15 @@ export default function ProposalTemplate() {
       eyebrow="Branding"
       description="Upload an existing proposal document or create a reusable template in the system. Templates can be used when building new proposals."
     >
+      {/* AI Generator Panel */}
+      <div className="mb-6">
+        <AIProposalGenerator orgId={orgId} onGenerated={load} />
+      </div>
+
+      <div className="mb-2 flex items-center gap-2">
+        <Sparkles size={16} className="text-[#b0a209]" />
+        <h2 className="text-sm font-black uppercase tracking-wide text-black/40">Manual Template Editor</h2>
+      </div>
       <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
         <div className="space-y-4">
           <div className="flex gap-2">
