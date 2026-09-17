@@ -450,6 +450,15 @@ async function processProject(client: any, project: any, maxSteps: number = 20):
   let healCount = run.auto_heal_count || 0;
   const transitions: any[] = JSON.parse(run.transition_history || '[]');
 
+  // Accumulated pipeline context — outputs from each step become inputs for the next.
+  // This is the core of deterministic threading: each step's requiredInputs are
+  // satisfied by the accumulated outputs of all prior steps.
+  const pipelineContext: Record<string, any> = {
+    source_url: project.source_url || '',
+    title: project.title || '',
+    specs: project.specs || '',
+  };
+
   // Walk the pipeline deterministically
   while (stepCount < maxSteps) {
     const step = getStep(currentState);
@@ -490,13 +499,19 @@ async function processProject(client: any, project: any, maxSteps: number = 20):
       return { run_id: run.id, state: 'BLOCKED', status: 'blocked', error: e.message };
     }
 
-    // 2. Validate the output
+    // 2. Validate the output (inputs = accumulated context from prior steps)
     const validation: ValidationResult = validateAction(
       currentState,
-      { source_url: project.source_url, title: project.title, specs: project.specs },
+      pipelineContext,
       actionOutput.output,
       context
     );
+
+    // Merge this step's outputs into the pipeline context so subsequent steps
+    // can use them as inputs (deterministic threading).
+    for (const [k, v] of Object.entries(actionOutput.output)) {
+      if (v !== undefined && v !== null && v !== '') pipelineContext[k] = v;
+    }
 
     const durationMs = Date.now() - actionStart;
 
@@ -512,7 +527,7 @@ async function processProject(client: any, project: any, maxSteps: number = 20):
         state: currentState,
         step_number: stepCount,
         action_name: actionOutput.action_name,
-        input_payload: JSON.stringify({ source_url: project.source_url, title: project.title }).substring(0, 10000),
+        input_payload: JSON.stringify(pipelineContext).substring(0, 10000),
         output_payload: JSON.stringify(actionOutput.output).substring(0, 10000),
         validation_passed: validation.passed,
         validation_result: validation.proof_artifact.substring(0, 10000),
