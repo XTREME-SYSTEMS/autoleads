@@ -1,0 +1,173 @@
+{
+  "name": "DeepStepProof",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "pipeline_run_id": {
+      "type": "string",
+      "description": "Links to the DeepPipelineRun this proof belongs to"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "The Project entity this step was performed on"
+    },
+    "state": {
+      "type": "string",
+      "description": "Which pipeline state this proof is for",
+      "enum": [
+        "SOURCE_DISCOVERED",
+        "SOURCE_SCRAPED",
+        "SOURCE_PARSED",
+        "LEAD_VALIDATED",
+        "LEAD_MATCHED",
+        "LEAD_QUALIFIED",
+        "TAKEOFF_COMPLETED",
+        "ESTIMATE_COMPLETED",
+        "PROPOSAL_GENERATED",
+        "PROPOSAL_VALIDATED",
+        "PROPOSAL_APPROVED",
+        "BID_SUBMITTED",
+        "FOLLOW_UP_SENT",
+        "RESPONSE_RECEIVED",
+        "NEGOTIATION_STARTED",
+        "CONTRACT_SIGNED",
+        "INVOICE_SENT",
+        "PAYMENT_RECEIVED",
+        "WON",
+        "LOST",
+        "BLOCKED"
+      ]
+    },
+    "step_number": {
+      "type": "number",
+      "description": "Sequential step number within this pipeline run",
+      "default": 0
+    },
+    "action_name": {
+      "type": "string",
+      "description": "The specific action/function that was executed"
+    },
+    "input_payload": {
+      "type": "string",
+      "description": "JSON snapshot of the input to this step"
+    },
+    "output_payload": {
+      "type": "string",
+      "description": "JSON snapshot of the output from this step"
+    },
+    "validation_passed": {
+      "type": "boolean",
+      "description": "Whether all validators passed for this step",
+      "default": false
+    },
+    "validation_result": {
+      "type": "string",
+      "description": "Full validation result JSON (all validator results, evidence, missing fields)"
+    },
+    "evidence_summary": {
+      "type": "string",
+      "description": "Human-readable evidence summary of what was validated"
+    },
+    "proof_artifacts": {
+      "type": "string",
+      "description": "JSON of proof artifact keys and values (raw_html, parsed_json, etc.)"
+    },
+    "auto_healed": {
+      "type": "boolean",
+      "description": "Whether this step was auto-healed after an initial failure",
+      "default": false
+    },
+    "heal_attempts": {
+      "type": "number",
+      "description": "Number of heal attempts before this step passed",
+      "default": 0
+    },
+    "human_approval_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "human_approved_by": {
+      "type": "string",
+      "description": "User who approved this step (if human approval was required)"
+    },
+    "executed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "validated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "number",
+      "description": "How long the action took in milliseconds"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "pipeline_run_id",
+    "state",
+    "validation_passed"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

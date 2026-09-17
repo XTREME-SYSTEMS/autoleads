@@ -1,0 +1,188 @@
+{
+  "name": "DeepPipelineRun",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Owning organization"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "The Project entity this pipeline run is tracking"
+    },
+    "source_url": {
+      "type": "string",
+      "description": "The original source URL that started this pipeline run"
+    },
+    "current_state": {
+      "type": "string",
+      "description": "Current position in the deterministic pipeline state machine",
+      "enum": [
+        "SOURCE_DISCOVERED",
+        "SOURCE_SCRAPED",
+        "SOURCE_PARSED",
+        "LEAD_VALIDATED",
+        "LEAD_MATCHED",
+        "LEAD_QUALIFIED",
+        "TAKEOFF_COMPLETED",
+        "ESTIMATE_COMPLETED",
+        "PROPOSAL_GENERATED",
+        "PROPOSAL_VALIDATED",
+        "PROPOSAL_APPROVED",
+        "BID_SUBMITTED",
+        "FOLLOW_UP_SENT",
+        "RESPONSE_RECEIVED",
+        "NEGOTIATION_STARTED",
+        "CONTRACT_SIGNED",
+        "INVOICE_SENT",
+        "PAYMENT_RECEIVED",
+        "WON",
+        "LOST",
+        "BLOCKED"
+      ],
+      "default": "SOURCE_DISCOVERED"
+    },
+    "previous_state": {
+      "type": "string",
+      "description": "The state before the current one (for transition history)"
+    },
+    "progress_pct": {
+      "type": "number",
+      "description": "0-100 progress through the pipeline",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "paused",
+        "completed",
+        "blocked",
+        "failed"
+      ],
+      "default": "running"
+    },
+    "step_count": {
+      "type": "number",
+      "description": "Total number of steps completed in this run",
+      "default": 0
+    },
+    "validation_pass_count": {
+      "type": "number",
+      "description": "Total validations that passed",
+      "default": 0
+    },
+    "validation_fail_count": {
+      "type": "number",
+      "description": "Total validations that failed",
+      "default": 0
+    },
+    "auto_heal_count": {
+      "type": "number",
+      "description": "Number of auto-heal attempts triggered",
+      "default": 0
+    },
+    "human_approval_required": {
+      "type": "boolean",
+      "description": "Whether the current state requires human approval to advance",
+      "default": false
+    },
+    "human_approval_given": {
+      "type": "boolean",
+      "default": false
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_action_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "final_value": {
+      "type": "number",
+      "description": "Final contract value if WON"
+    },
+    "loss_reason": {
+      "type": "string",
+      "description": "Reason if LOST"
+    },
+    "blocked_reason": {
+      "type": "string",
+      "description": "Why the pipeline is BLOCKED"
+    },
+    "transition_history": {
+      "type": "string",
+      "description": "JSON array of all state transitions with timestamps and validation results"
+    },
+    "data_class": {
+      "type": "string",
+      "enum": [
+        "production",
+        "NON_PRODUCTION_EXAMPLE"
+      ],
+      "default": "production"
+    }
+  },
+  "required": [
+    "source_url",
+    "current_state",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": {
+            "$in": "{{user.data.organization_ids}}"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
